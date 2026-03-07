@@ -1,0 +1,539 @@
+:root {
+  --bg: #f6f1e8;
+  --bg-deep: #efe6d6;
+  --paper: rgba(255, 250, 242, 0.96);
+  --paper-strong: #fffdf8;
+  --ink: #2f2418;
+  --muted: #6e6256;
+  --accent: #8c2f1c;
+  --accent-dark: #6f2416;
+  --accent-soft: #f3e4dc;
+  --gold: #b89a5c;
+  --gold-soft: #e9ddbf;
+  --border: #d8c8b2;
+  --border-strong: #cbb79c;
+  --shadow: 0 14px 34px rgba(74, 48, 24, 0.12);
+  --shadow-soft: 0 8px 22px rgba(74, 48, 24, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.8;
+  font-family:
+    "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "YuMincho",
+    serif;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(rgba(80, 58, 34, 0.045) 0.9px, transparent 0.9px),
+    radial-gradient(rgba(80, 58, 34, 0.03) 0.9px, transparent 0.9px),
+    linear-gradient(180deg, #f8f3ea 0%, #f3ece0 48%, #efe6d8 100%);
+  background-size:
+    18px 18px,
+    18px 18px,
+    100% 100%;
+  background-position:
+    0 0,
+    9px 9px,
+    0 0;
+}
+
+/* 共通 */
+.container {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+h1 {
+  margin: 0 0 14px;
+  font-size: clamp(2.1rem, 4.2vw, 3.3rem);
+  line-height: 1.2;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 1.2rem;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gold-soft);
+}
+
+h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+p {
+  margin-top: 0;
+}
+
+/* ヘッダー */
+.site-header {
+  position: relative;
+  padding: 56px 0 28px;
+  overflow: hidden;
+}
+
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(140, 47, 28, 0.9), rgba(111, 36, 22, 0.92)),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.06) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.04) 50%,
+      rgba(255, 255, 255, 0.04) 75%,
+      transparent 75%,
+      transparent
+    );
+  background-size:
+    100% 100%,
+    28px 28px;
+  z-index: 0;
+}
+
+.site-header .container {
+  position: relative;
+  z-index: 1;
+}
+
+.site-header .eyebrow,
+.site-header h1,
+.site-header .lead {
+  color: #fffaf2;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  opacity: 0.94;
+}
+
+.lead {
+  /* max-width: 780px; */
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.9;
+  opacity: 0.95;
+}
+
+/* メインレイアウト */
+.main-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+  padding: 18px 0 52px;
+}
+
+.card {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 22px;
+  backdrop-filter: blur(1px);
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.42),
+      rgba(255, 255, 255, 0)
+    ),
+    radial-gradient(rgba(120, 90, 50, 0.03) 0.8px, transparent 0.8px);
+  background-size:
+    100% 100%,
+    16px 16px;
+  pointer-events: none;
+}
+
+.hero-card {
+  grid-column: span 7;
+}
+
+.controls-card {
+  grid-column: span 6;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* 一首・結果 */
+.random-poem,
+.results-list,
+.ngram-results {
+  margin-top: 12px;
+}
+
+.poem-card,
+.random-poem .poem-card {
+  background: var(--paper-strong);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-soft);
+}
+
+.poem-card + .poem-card {
+  margin-top: 14px;
+}
+
+.poem-meta {
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.poem-text {
+  margin: 0 0 8px;
+  font-size: 1.08rem;
+  line-height: 2;
+  letter-spacing: 0.03em;
+}
+
+.poem-kana {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.85;
+}
+
+.poem-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* コントロール */
+.control-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+label span {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+input[type="text"],
+select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+input[type="text"]:focus,
+select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(184, 154, 92, 0.16);
+  background: #fffefb;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-row input {
+  accent-color: var(--accent);
+}
+
+.checkbox-row span {
+  margin: 0;
+  font-weight: 400;
+}
+
+.checkbox-row.compact {
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.button {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 11px 18px;
+  background: linear-gradient(
+    180deg,
+    var(--accent) 0%,
+    var(--accent-dark) 100%
+  );
+  color: #fffdf9;
+  cursor: pointer;
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  font-family: inherit;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease,
+    box-shadow 0.15s ease;
+  box-shadow: 0 6px 14px rgba(111, 36, 22, 0.18);
+}
+
+.button:hover {
+  opacity: 0.96;
+  transform: translateY(-1px);
+}
+
+.button.secondary {
+  background: linear-gradient(180deg, #f6ede7 0%, #ecdfd5 100%);
+  color: var(--accent);
+  border-color: #e2d0c3;
+  box-shadow: 0 4px 10px rgba(111, 36, 22, 0.06);
+}
+
+/* タグ・クイックリンク */
+.quick-links,
+.sub-panel {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gold-soft);
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag-button,
+.filter-chip,
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-family: inherit;
+}
+
+.tag-button {
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #fffdf9 0%, #f7efe5 100%);
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tag-button:hover {
+  border-color: var(--gold);
+  background: #fff7ee;
+}
+
+.filter-chip,
+.badge {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+/* 空状態 */
+.muted {
+  margin: 0;
+  color: var(--muted);
+}
+
+.empty-state {
+  border: 1px dashed var(--border-strong);
+  border-radius: 16px;
+  padding: 18px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+/* N-gram */
+.ngram-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.ngram-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: #fffdfa;
+}
+
+/* ハイライト */
+mark {
+  background: linear-gradient(transparent 58%, #e7d18d 58%);
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* 結果オプション */
+.result-options {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* 縦書き風の入口 */
+.results-list.vertical-mode .poem-text,
+.random-poem.vertical-mode .poem-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  max-height: 18em;
+  line-height: 2.1;
+  margin-inline: auto;
+}
+
+/* 補助 */
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+/* レスポンシブ */
+@media (max-width: 860px) {
+  .hero-card,
+  .controls-card,
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .control-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .site-header {
+    padding: 44px 0 22px;
+  }
+
+  .card {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .poem-text {
+    font-size: 1.02rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .container {
+    width: min(100% - 20px, 1120px);
+  }
+
+  .main-grid {
+    gap: 16px;
+    padding-bottom: 36px;
+  }
+
+  .button,
+  .tag-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .button-row,
+  .tag-row,
+  .result-options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .section-head {
+    align-items: stretch;
+  }
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination-info {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-left: 8px;
+}
+
+.pagination-ellipsis {
+  padding: 0 4px;
+  color: var(--muted);
+}
