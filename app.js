@@ -278,7 +278,8 @@ function populateCollectionFilter() {
     ...new Set(state.poems.map((poem) => poem.collection).filter(Boolean)),
   ].sort((a, b) => a.localeCompare(b, "ja"));
 
-  appendOptions(elements.collectionFilter, collections);
+  const countMap = buildCountMap(state.poems.map((poem) => poem.collection));
+  appendOptions(elements.collectionFilter, collections, countMap);
 }
 
 function populateThemeFilterFromData() {
@@ -291,7 +292,8 @@ function populateThemeFilterFromData() {
     ...new Set(state.poems.map((poem) => poem.theme).filter(Boolean)),
   ].sort((a, b) => a.localeCompare(b, "ja"));
 
-  appendOptions(elements.themeFilter, themes);
+  const countMap = buildCountMap(state.poems.map((poem) => poem.theme));
+  appendOptions(elements.themeFilter, themes, countMap);
 
   if (themes.includes(currentValue)) {
     elements.themeFilter.value = currentValue;
@@ -316,7 +318,8 @@ function populateSeasonFilter() {
       .sort((a, b) => a.localeCompare(b, "ja")),
   ];
 
-  appendOptions(elements.seasonFilter, seasons);
+  const countMap = buildCountMap(state.poems.map((poem) => poem.season));
+  appendOptions(elements.seasonFilter, seasons, countMap);
 
   if (seasons.includes(currentValue)) {
     elements.seasonFilter.value = currentValue;
@@ -328,7 +331,8 @@ function populateAuthorFilter() {
     ...new Set(state.poems.map((poem) => poem.author).filter(Boolean)),
   ].sort((a, b) => a.localeCompare(b, "ja"));
 
-  appendOptions(elements.authorFilter, authors);
+  const countMap = buildCountMap(state.poems.map((poem) => poem.author));
+  appendOptions(elements.authorFilter, authors, countMap);
 }
 
 function populateKigoFilter() {
@@ -336,10 +340,29 @@ function populateKigoFilter() {
     ...new Set(state.kigoDictionary.map((entry) => entry.word).filter(Boolean)),
   ].sort((a, b) => a.localeCompare(b, "ja"));
 
-  appendOptions(elements.kigoFilter, kigoList);
+  const countMap = new Map();
+
+  state.poems.forEach((poem) => {
+    detectKigoWords(poem).forEach((word) => {
+      countMap.set(word, (countMap.get(word) || 0) + 1);
+    });
+  });
+
+  appendOptions(elements.kigoFilter, kigoList, countMap);
 }
 
-function appendOptions(selectElement, values) {
+function buildCountMap(items) {
+  const map = new Map();
+
+  items.forEach((value) => {
+    if (!value) return;
+    map.set(value, (map.get(value) || 0) + 1);
+  });
+
+  return map;
+}
+
+function appendOptions(selectElement, values, countMap = null) {
   if (!selectElement) return;
 
   const fragment = document.createDocumentFragment();
@@ -347,13 +370,15 @@ function appendOptions(selectElement, values) {
   values.forEach((value) => {
     const option = document.createElement("option");
     option.value = value;
-    option.textContent = value;
+
+    const count = countMap?.get(value) ?? null;
+    option.textContent = count !== null ? `${value} (${count})` : value;
+
     fragment.appendChild(option);
   });
 
   selectElement.appendChild(fragment);
 }
-
 /* -------------------------
    季語自動判定
 ------------------------- */
