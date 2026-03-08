@@ -173,6 +173,269 @@
       </div>
       <div id="pagination" class="pagination"></div>
     </section>
+
+    <section class="card controls-card full-width">
+      <div class="section-head">
+        <div>
+          <h2>歌詠みモード</h2>
+          <p class="muted">生成専用の遊び場です。まずはUIのみ用意しています。</p>
+        </div>
+      </div>
+
+      <div class="mode-tabs" role="tablist" aria-label="歌詠みモード切り替え">
+        <button id="generatorTabButton" class="button" type="button" data-mode-tab="generator" aria-pressed="true">AI歌人風</button>
+        <button id="assistTabButton" class="button secondary" type="button" data-mode-tab="assist" aria-pressed="false">共作モード</button>
+      </div>
+
+      <div class="mode-panels">
+        <section id="generatorModePanel" class="mode-panel" data-mode-panel="generator">
+          <div class="section-head compact-head">
+            <div>
+              <h3>AI歌人風・全自動生成</h3>
+              <p class="muted">季節・出典・作者・語句を条件にして、全体を自動で組み立てる想定です。</p>
+            </div>
+            <div class="button-row">
+              <button id="generateAutoPoemButton" class="button" type="button">一首生成</button>
+              <button id="generateRandomPoemButton" class="button secondary" type="button">完全ランダム</button>
+            </div>
+          </div>
+
+          <form id="generatorForm" class="control-stack">
+            <div class="control-grid three-col">
+              <label>
+                <span>生成モード</span>
+                <select id="generatorModeSelect">
+                  <option value="guided">条件つき生成</option>
+                  <option value="random">完全ランダム生成</option>
+                </select>
+              </label>
+
+              <label>
+                <span>季節</span>
+                <select id="generatorSeasonFilter">
+                  <option value="">指定なし</option>
+                  <option value="春">春</option>
+                  <option value="夏">夏</option>
+                  <option value="秋">秋</option>
+                  <option value="冬">冬</option>
+                </select>
+              </label>
+
+              <label>
+                <span>出典</span>
+                <select id="generatorCollectionFilter">
+                  <option value="">指定なし</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="control-grid three-col">
+              <label>
+                <span>作者</span>
+                <select id="generatorAuthorFilter">
+                  <option value="">指定なし</option>
+                </select>
+                <small class="field-note">歌数が一定以上ある作者だけを出す想定</small>
+              </label>
+
+              <label>
+                <span>語句</span>
+                <input id="generatorKeywordInput" type="text" placeholder="例: 月、雪、春、夢" />
+              </label>
+
+              <label>
+                <span>語句の扱い</span>
+                <select id="generatorKeywordModeSelect">
+                  <option value="prefer">できれば入れる</option>
+                  <option value="must">必ず入れる</option>
+                  <option value="theme">雰囲気だけ寄せる</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="control-grid two-col">
+              <label>
+                <span>歌風</span>
+                <select id="generatorStyleSelect">
+                  <option value="balanced">バランス重視</option>
+                  <option value="classical">古典語感強め</option>
+                  <option value="simple">やや素直</option>
+                  <option value="experimental">やや崩し気味</option>
+                </select>
+              </label>
+
+              <label>
+                <span>整え方</span>
+                <select id="generatorShapeSelect">
+                  <option value="auto">自動</option>
+                  <option value="57577">五七五七七寄り</option>
+                  <option value="free">言い回し優先</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="checkbox-group">
+              <label class="checkbox-row compact">
+                <input id="generatorUseSeasonOnlyToggle" type="checkbox" />
+                <span>季節明示ありの歌を優先する</span>
+              </label>
+              <label class="checkbox-row compact">
+                <input id="generatorUseAuthorThresholdToggle" type="checkbox" checked />
+                <span>作者は歌数が多い人のみ候補にする</span>
+              </label>
+              <label class="checkbox-row compact">
+                <input id="generatorPreferKigoToggle" type="checkbox" checked />
+                <span>季語を優先して拾う</span>
+              </label>
+            </div>
+          </form>
+
+          <div class="sub-panel generated-output-panel">
+            <div class="section-head compact-head">
+              <h3>生成結果</h3>
+              <div class="button-row">
+                <button id="copyGeneratedPoemButton" class="button secondary" type="button">コピー</button>
+                <button id="saveGeneratedPoemButton" class="button secondary" type="button">候補として保存</button>
+              </div>
+            </div>
+
+            <div id="generatedPoemMeta" class="active-filters generated-meta">
+              <span class="filter-chip">まだ生成していません</span>
+            </div>
+
+            <div id="generatedPoemResult" class="generated-poem-display empty-state">
+              ここに自動生成された一首を表示します。
+            </div>
+
+            <details class="sub-panel generated-source-panel">
+              <summary>参照した条件・候補語のメモ</summary>
+              <div id="generatedPoemSource" class="muted">
+                後で、使用した条件や参照候補を表示できます。
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <section id="assistModePanel" class="mode-panel" data-mode-panel="assist" hidden>
+          <div class="section-head compact-head">
+            <div>
+              <h3>共作モード・一部だけ人間が書く</h3>
+              <p class="muted">1〜4か所だけ自分で入れて、残りをいい感じにつなぐ想定です。</p>
+            </div>
+            <div class="button-row">
+              <button id="assistGenerateButton" class="button" type="button">続きを整える</button>
+              <button id="assistResetButton" class="button secondary" type="button">入力をリセット</button>
+            </div>
+          </div>
+
+          <form id="assistForm" class="control-stack">
+            <div class="control-grid three-col">
+              <label>
+                <span>季節</span>
+                <select id="assistSeasonFilter">
+                  <option value="">指定なし</option>
+                  <option value="春">春</option>
+                  <option value="夏">夏</option>
+                  <option value="秋">秋</option>
+                  <option value="冬">冬</option>
+                </select>
+              </label>
+
+              <label>
+                <span>出典</span>
+                <select id="assistCollectionFilter">
+                  <option value="">指定なし</option>
+                </select>
+              </label>
+
+              <label>
+                <span>作者</span>
+                <select id="assistAuthorFilter">
+                  <option value="">指定なし</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="control-grid two-col">
+              <label>
+                <span>入れたい語句</span>
+                <input id="assistKeywordInput" type="text" placeholder="例: 月、雪、春、旅" />
+              </label>
+
+              <label>
+                <span>埋め方</span>
+                <select id="assistFillModeSelect">
+                  <option value="natural">自然につなぐ</option>
+                  <option value="classical">古典寄りに寄せる</option>
+                  <option value="tight">なるべく五七五七七に寄せる</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="sub-panel line-editor-panel">
+              <div class="section-head compact-head">
+                <h3>自分で書く箇所</h3>
+                <p class="muted">空欄の句をあとで補完する想定です。</p>
+              </div>
+
+              <div class="waka-editor-grid">
+                <label class="waka-line-input">
+                  <span>第一句</span>
+                  <input id="assistLine1" type="text" placeholder="例: 春の野に" />
+                </label>
+                <label class="waka-line-input">
+                  <span>第二句</span>
+                  <input id="assistLine2" type="text" placeholder="空欄でも可" />
+                </label>
+                <label class="waka-line-input">
+                  <span>第三句</span>
+                  <input id="assistLine3" type="text" placeholder="空欄でも可" />
+                </label>
+                <label class="waka-line-input">
+                  <span>第四句</span>
+                  <input id="assistLine4" type="text" placeholder="空欄でも可" />
+                </label>
+                <label class="waka-line-input">
+                  <span>第五句</span>
+                  <input id="assistLine5" type="text" placeholder="例: 名こそ惜しけれ" />
+                </label>
+              </div>
+
+              <div class="button-row">
+                <button id="assistPresetFirstLineButton" class="button secondary" type="button">第一句だけ書く</button>
+                <button id="assistPresetLastLineButton" class="button secondary" type="button">結句だけ書く</button>
+                <button id="assistPresetRandomSlotsButton" class="button secondary" type="button">1〜4か所ランダムで使う</button>
+              </div>
+            </div>
+          </form>
+
+          <div class="sub-panel generated-output-panel">
+            <div class="section-head compact-head">
+              <h3>共作結果</h3>
+              <div class="button-row">
+                <button id="copyAssistPoemButton" class="button secondary" type="button">コピー</button>
+                <button id="saveAssistPoemButton" class="button secondary" type="button">候補として保存</button>
+              </div>
+            </div>
+
+            <div id="assistPoemMeta" class="active-filters generated-meta">
+              <span class="filter-chip">まだ整えていません</span>
+            </div>
+
+            <div id="assistPoemResult" class="generated-poem-display empty-state">
+              ここに共作結果を表示します。
+            </div>
+
+            <details class="sub-panel generated-source-panel">
+              <summary>補完メモ</summary>
+              <div id="assistPoemSource" class="muted">
+                後で、どの句を固定しどの句を補完したか表示できます。
+              </div>
+            </details>
+          </div>
+        </section>
+      </div>
+    </section>
   </main>
 
   <template id="poemCardTemplate">
@@ -185,5 +448,6 @@
   </template>
 
   <script src="app.js"></script>
+  <script src="utayomi.js"></script>
 </body>
 </html>

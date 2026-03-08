@@ -537,3 +537,87 @@ hr {
   padding: 0 4px;
   color: var(--muted);
 }
+
+/* 和歌表示用の筆文字フォント (Google Fonts) */
+@import url('https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap');
+
+/* 生成結果のコンテナ */
+.generated-poem-display {
+  height: 800px;
+  width: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fcfaf2; /* 和紙風のベース色 */
+  background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png"); /* 和紙テクスチャ */
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  padding: 40px 20px;
+  margin: 20px 0;
+  position: relative;
+  box-shadow: inset 0 0 50px rgba(184, 154, 92, 0.1);
+}
+
+/* 和歌のレイアウト：二行表示 */
+.waka-v-container {
+  writing-mode: vertical-rl; /* 縦書き */
+  text-orientation: upright;
+  font-family: 'Yuji Syuku', serif; /* 手書き風フォント */
+  font-size: 1.8rem;
+  line-height: 2.5;
+  letter-spacing: 0.15em;
+  color: #1a1a1a; /* 墨色 */
+}
+
+/* 上の句（1-3句） */
+.waka-kami {
+  margin-left: 1.5em; /* 下の句との間隔 */
+}
+
+/* 下の句（4-5句） */
+.waka-shimo {
+  margin-top: 5em; /* 少し下げて配置する伝統的な書き方 */
+}
+
+/* 墨がにじむような効果（オプション） */
+.waka-v-container span {
+  filter: blur(0.2px);
+  display: inline-block;
+}
+
+/* 筆致アニメーション */
+.waka-v-container span {
+  display: inline-block;
+  opacity: 0;
+  animation: inkAppear 2s ease-out forwards;
+}
+
+.waka-shimo span {
+  animation-delay: 1.5s; /* 下の句を少し遅らせて表示 */
+}
+
+@keyframes inkAppear {
+  0% {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0.2px);
+    transform: translateY(0);
+  }
+}
+
+.generated-poem-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 320px;
+  text-align: center;
+}
+
+.waka-v-container {
+  width: fit-content;
+  margin: 0 auto;
+}
