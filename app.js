@@ -445,7 +445,12 @@ function createPoemCard(poem, options = {}) {
       : escapeHtml(poem.text || "");
 
   if (poem.kana) {
-    kana.textContent = poem.kana;
+    const kanaHighlightTerms = buildKanaHighlightTerms(highlightTerms);
+
+    kana.innerHTML =
+      useHighlight && kanaHighlightTerms.length
+        ? highlightMultipleTerms(poem.kana || "", kanaHighlightTerms)
+        : escapeHtml(poem.kana || "");
   } else {
     kana.remove();
   }
@@ -657,7 +662,7 @@ function renderActiveFilters() {
   const chips = [];
 
   const query = elements.searchInput.value.trim();
-  const collection = elements.collectionFilter?.value || "";
+  const collection = elements.collectionFilter.value || "";
   const theme = elements.themeFilter?.value || "";
   const season = elements.seasonFilter?.value || "";
   const author = elements.authorFilter?.value || "";
@@ -1042,6 +1047,28 @@ function normalizeText(text) {
     .normalize("NFKC")
     .replace(/\s+/g, "")
     .toLowerCase();
+}
+
+function katakanaToHiragana(text) {
+  return String(text).replace(/[\u30A1-\u30F6]/g, (ch) =>
+    String.fromCharCode(ch.charCodeAt(0) - 0x60)
+  );
+}
+
+function buildKanaHighlightTerms(terms) {
+  const result = new Set();
+
+  terms.forEach((term) => {
+    const raw = String(term || "").trim();
+    if (!raw) return;
+
+    result.add(raw);
+
+    const hira = katakanaToHiragana(raw);
+    if (hira) result.add(hira);
+  });
+
+  return [...result];
 }
 
 function escapeHtml(value) {
