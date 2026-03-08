@@ -1,3 +1,6 @@
+/* 和歌表示用の筆文字フォント (Google Fonts) */
+@import url('https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap');
+
 :root {
   --bg: #f6f1e8;
   --bg-deep: #efe6d6;
@@ -537,9 +540,6 @@ hr {
   padding: 0 4px;
   color: var(--muted);
 }
-
-/* 和歌表示用の筆文字フォント (Google Fonts) */
-@import url('https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap');
 
 /* 生成結果のコンテナ */
 .generated-poem-display {
