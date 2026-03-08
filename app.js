@@ -134,7 +134,8 @@ async function loadData() {
       "./data/poems2.json",
       "./data/poems3.json",
       "./data/poems4.json",
-      "./data/poems5.json"
+      "./data/poems5.json",
+      "./data/poems6.json"
     ];
 
     const poemRequests = poemFiles.map(async (file) => {
