@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>古典用語一覧</title>
+    <meta name="description" content="登録済みの古典用語・助動詞・歌枕・歌枕地名などを一覧表示し、検索や並び替えができます。" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <p class="eyebrow">古典語辞書</p>
+            <h1>登録単語一覧</h1>
+            <p class="lead">
+                登録済みの古典用語・助動詞・枕詞・地名・植物などを一覧表示します。
+            </p>
+        </div>
+    </header>
+
+    <main class="container main-grid">
+        <section class="card full-width">
+            <div class="section-head">
+                <div>
+                    <h2>検索・絞り込み</h2>
+                    <p id="termsSummary" class="muted">読み込み中...</p>
+                </div>
+                <div class="button-row">
+                    <a href="index.html" class="button secondary">検索ページへ戻る</a>
+                </div>
+            </div>
+
+            <form id="termsFilterForm" class="control-stack">
+                <div class="control-grid three-col">
+                    <label>
+                        <span>検索</span>
+                        <input id="termsSearchInput" type="text" placeholder="語・読み・意味・タグ・関連語で検索" />
+                    </label>
+
+                    <label>
+                        <span>分類</span>
+                        <select id="termsPartOfSpeechFilter">
+                            <option value="">すべて</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        <span>タグ</span>
+                        <select id="termsTagFilter">
+                            <option value="">すべて</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="control-grid three-col">
+                    <label>
+                        <span>並び順</span>
+                        <select id="termsSortSelect">
+                            <option value="word-asc">語順（昇順）</option>
+                            <option value="word-desc">語順（降順）</option>
+                            <option value="reading-asc">読み（昇順）</option>
+                            <option value="reading-desc">読み（降順）</option>
+                            <option value="part-asc">分類（昇順）</option>
+                            <option value="tag-count-desc">タグ数が多い順</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        <span>表示件数</span>
+                        <select id="termsPageSizeSelect">
+                            <option value="20">20件</option>
+                            <option value="50" selected>50件</option>
+                            <option value="100">100件</option>
+                            <option value="9999">すべて</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        <span>表示モード</span>
+                        <select id="termsViewModeSelect">
+                            <option value="cards" selected>カード表示</option>
+                            <option value="table">表表示</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="button-row">
+                    <button type="submit" class="button">反映</button>
+                    <button id="termsClearButton" type="button" class="button secondary">
+                        クリア
+                    </button>
+                </div>
+            </form>
+
+            <div class="sub-panel">
+                <h3>タグ一覧</h3>
+                <div id="termsTagQuickLinks" class="tag-row"></div>
+            </div>
+        </section>
+
+        <section class="card full-width">
+            <div class="section-head">
+                <h2>一覧</h2>
+            </div>
+
+            <div id="termsResults" class="results-list empty-state">
+                ここに登録単語が表示されます。
+            </div>
+
+            <div id="termsPagination" class="pagination"></div>
+
+            <div class="button-row">
+                <a href="index.html" class="button secondary">ホーム</a>
+            </div>
+        </section>
+    </main>
+
+    <template id="termCardTemplate">
+        <article class="term-card">
+            <div class="term-card-head">
+                <div>
+                    <h3 class="term-word"></h3>
+                    <p class="term-reading muted"></p>
+                </div>
+                <div class="term-part"></div>
+            </div>
+
+            <div class="term-tags"></div>
+
+            <div class="term-section">
+                <strong>意味</strong>
+                <ul class="term-meaning"></ul>
+            </div>
+
+            <div class="term-section term-aliases-wrap">
+                <strong>異表記</strong>
+                <p class="term-aliases"></p>
+            </div>
+
+            <div class="term-section term-related-wrap">
+                <strong>関連語</strong>
+                <div class="term-related tag-row"></div>
+            </div>
+
+            <div class="term-section term-conjugation-wrap">
+                <strong>活用</strong>
+                <div class="term-conjugation"></div>
+            </div>
+
+            <div class="term-section term-note-wrap">
+                <strong>補足</strong>
+                <p class="term-note muted"></p>
+            </div>
+        </article>
+    </template>
+
+    <script src="terms.js"></script>
+</body>
+
+</html>

@@ -687,3 +687,95 @@ hr {
 .study-entry-card:last-child {
   border-bottom: none;
 }
+
+.three-col {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.term-card-list {
+  display: grid;
+  gap: 14px;
+}
+
+.term-card {
+  background: var(--paper-strong);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-soft);
+}
+
+.term-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.term-word {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+}
+
+.term-tags,
+.term-related {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.term-section {
+  margin-top: 12px;
+}
+
+.term-section strong {
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.term-meaning {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.terms-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--paper-strong);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.terms-table th,
+.terms-table td {
+  border-bottom: 1px solid var(--border);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.terms-table th {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.terms-table tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 860px) {
+  .three-col {
+    grid-template-columns: 1fr;
+  }
+
+  .terms-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
