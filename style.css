@@ -632,3 +632,58 @@ hr {
 .generated-poem-display.capture-mode {
   box-shadow: inset 0 0 50px rgba(184, 154, 92, 0.1);
 }
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+
+.tag-chip {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f2f2f2;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.conjugation-block {
+  margin-top: 8px;
+}
+
+.conj-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 0.95rem;
+}
+
+.conj-table th,
+.conj-table td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.conj-table th {
+  background: #f7f7f7;
+  font-weight: 600;
+}
+
+.conjugation-wide-table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.study-entry-card {
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.study-entry-card:last-child {
+  border-bottom: none;
+}
