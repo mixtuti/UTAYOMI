@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>統計 | 和歌コーパス検索</title>
+    <meta name="description" content="和歌コーパスと古典用語辞書をもとに、枕詞ランキング、植物・動物ランキング、共起語、タグ分布などを表示する統計ページです。" />
+
+    <link rel="icon" href="./image/icon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="./image/icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="統計 | 和歌コーパス検索" />
+    <meta property="og:description" content="枕詞ランキング、植物・動物ランキング、月の共起語、タグ分布などを表示する統計ページ。" />
+    <meta property="og:image" content="https://mixtuti.github.io/UTAYOMI/Image/icon.png" />
+    <meta property="og:url" content="https://mixtuti.github.io/UTAYOMI/stats.html" />
+    <meta property="og:site_name" content="和歌コーパス検索" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="統計 | 和歌コーパス検索" />
+    <meta name="twitter:description" content="和歌コーパスと古典用語辞書の統計ページ。" />
+    <meta name="twitter:image" content="https://mixtuti.github.io/UTAYOMI/Image/icon.png" />
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <p class="eyebrow">和歌コーパス検索</p>
+            <h1>統計</h1>
+            <p class="lead">
+                辞書データと和歌コーパスをもとに、語彙・枕詞・共起語などの統計を表示します。
+            </p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="card full-width">
+            <div class="section-head">
+                <div>
+                    <h2>概要</h2>
+                    <p id="statsSummary" class="muted">読み込み中...</p>
+                </div>
+                <div class="button-row">
+                    <a href="index.html" class="button secondary">検索ページへ戻る</a>
+                    <a href="terms.html" class="button secondary">単語一覧へ</a>
+                </div>
+            </div>
+
+            <div id="statsOverviewCards" class="stats-overview-grid"></div>
+            <div class="stats-live-panel">
+                <div class="stats-progress-wrap">
+                    <div class="stats-progress-head">
+                        <strong>解析進捗</strong>
+                        <span id="statsProgressText" class="muted">0 / 0 首</span>
+                    </div>
+                    <div class="stats-progress-bar">
+                        <div id="statsProgressBar" class="stats-progress-fill"></div>
+                    </div>
+                </div>
+
+                <div class="stats-current-poem-wrap">
+                    <div class="stats-progress-head">
+                        <strong>解析中の和歌</strong>
+                        <span id="statsCurrentPoemMeta" class="muted">読み込み中...</span>
+                    </div>
+                    <div id="statsCurrentPoem" class="stats-current-poem empty-state">
+                        和歌を読み込み中です。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="section-head">
+                <h2>タグ分布</h2>
+            </div>
+            <div id="statsTagDistribution" class="stats-block"></div>
+        </section>
+
+        <section class="card">
+            <div class="section-head">
+                <h2>枕詞ランキング</h2>
+            </div>
+            <div id="statsMakurakotoba" class="stats-block"></div>
+        </section>
+
+        <section class="card">
+            <div class="section-head">
+                <h2>植物ランキング</h2>
+            </div>
+            <div id="statsPlants" class="stats-block"></div>
+        </section>
+
+        <section class="card">
+            <div class="section-head">
+                <h2>動物ランキング</h2>
+            </div>
+            <div id="statsAnimals" class="stats-block"></div>
+        </section>
+
+        <section class="card">
+            <div class="section-head">
+                <h2>地名ランキング</h2>
+            </div>
+            <div id="statsPlaces" class="stats-block"></div>
+        </section>
+
+        <section class="card">
+            <div class="section-head">
+                <h2>最後のブロックランキング</h2>
+                <p class="muted">かな表記の最後の空白区切りを集計します。</p>
+            </div>
+            <div id="statsEndingBlocks" class="stats-block"></div>
+        </section>
+
+        <section class="card full-width">
+            <div class="section-head">
+                <div>
+                    <h2>自立語ランキング</h2>
+                    <p class="muted">search_tokens から助詞・助動詞などを簡易除外して集計します。</p>
+                </div>
+            </div>
+            <div id="statsIndependentWords" class="stats-block"></div>
+        </section>
+
+        <section class="card full-width">
+            <div class="section-head">
+                <div>
+                    <h2>月の共起語</h2>
+                    <p class="muted">「月」を含む歌に一緒に現れやすい語です。</p>
+                </div>
+            </div>
+            <div id="statsMoonCooccurrence" class="stats-block"></div>
+        </section>
+
+        <section class="card full-width">
+            <div class="section-head">
+                <div>
+                    <h2>枕詞 → 後続語</h2>
+                    <p class="muted">辞書登録された枕詞に対して、和歌中で続きやすい語を集計します。</p>
+                </div>
+            </div>
+            <div id="statsMakuraFollowers" class="stats-block"></div>
+        </section>
+    </main>
+
+    <script src="stats.js"></script>
+</body>
+
+</html>
