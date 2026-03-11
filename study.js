@@ -160,8 +160,8 @@
         return `
             <div class="tag-list">
                 ${tags
-                    .map((tag) => `<span class="tag-chip">${escape(tag)}</span>`)
-                    .join("")}
+                .map((tag) => `<span class="tag-chip">${escape(tag)}</span>`)
+                .join("")}
             </div>
         `;
     }
@@ -363,6 +363,20 @@
         return state.poems.filter((poem) => poemMatchesAnyTerm(poem, terms));
     }
 
+    function findPoemsByIds(entries) {
+        if (!Array.isArray(state?.poems) || !state.poems.length) {
+            return [];
+        }
+
+        const ids = entries.flatMap(entry =>
+            Array.isArray(entry.poem_ids) ? entry.poem_ids : []
+        );
+
+        if (!ids.length) return [];
+
+        return state.poems.filter(poem => ids.includes(poem.id));
+    }
+
     function shuffle(array) {
         const arr = [...array];
 
@@ -457,7 +471,9 @@
 
         const examples = findExamples(word, entries);
 
-        renderExamples(examples, searchTerms);
+        const fixedPoems = findPoemsByIds(entries);
+
+        renderExamples([...fixedPoems, ...examples], searchTerms);
 
         if (elements.summary) {
             if (entries.length && entries.length > 1) {

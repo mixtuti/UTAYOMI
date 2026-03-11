@@ -698,25 +698,17 @@ hr {
 }
 
 .term-card {
-  background: var(--paper-strong);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 16px 18px;
-  box-shadow: var(--shadow-soft);
+  overflow: hidden;
 }
 
 .term-card-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
   align-items: flex-start;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
 }
 
-.term-word {
-  margin: 0 0 4px;
-  font-size: 1.1rem;
+.term-part {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .term-tags,
@@ -724,58 +716,197 @@ hr {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 10px;
 }
 
-.term-section {
-  margin-top: 12px;
+.term-related .tag-button,
+#termsTagQuickLinks .tag-button,
+.term-card .tag-button {
+  width: auto;
+  display: inline-flex;
+  justify-content: center;
 }
 
-.term-section strong {
-  display: inline-block;
-  margin-bottom: 6px;
+.term-aliases,
+.term-note {
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
-.term-meaning {
-  margin: 0;
-  padding-left: 1.2em;
+.term-meaning li {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.conjugation-block {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.conj-table {
+  min-width: 720px;
 }
 
 .terms-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--paper-strong);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  overflow: hidden;
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
 }
 
-.terms-table th,
-.terms-table td {
-  border-bottom: 1px solid var(--border);
-  padding: 10px 12px;
-  text-align: left;
-  vertical-align: top;
+/* タグ一覧は縦並びではなく折り返し */
+#termsTagQuickLinks,
+.term-related,
+.term-tags,
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.terms-table th {
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-weight: 700;
-}
+/* 520px以下の既存指定を上書き */
+@media (max-width: 520px) {
+  .card {
+    padding: 14px;
+    border-radius: 16px;
+  }
 
-.terms-table tr:last-child td {
-  border-bottom: none;
-}
+  .term-card {
+    padding: 14px;
+    border-radius: 14px;
+  }
 
-@media (max-width: 860px) {
+  .term-card-head {
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .term-word {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .term-reading {
+    font-size: 0.9rem;
+  }
+
+  .term-section {
+    margin-top: 10px;
+  }
+
+  .term-section strong {
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+  }
+
+  .term-meaning {
+    padding-left: 1.1em;
+    margin-top: 4px;
+  }
+
+  .term-meaning li {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  /* ボタン列だけ全幅 */
+  .button-row {
+    display: grid;
+    gap: 10px;
+  }
+
+  .button-row .button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* タグ系は全幅にしない */
+  .tag-button,
+  .term-related .tag-button,
+  #termsTagQuickLinks .tag-button,
+  .term-tags .badge,
+  .tag-chip,
+  .badge {
+    width: auto;
+    max-width: 100%;
+    font-size: 0.88rem;
+    min-height: 32px;
+    padding: 5px 10px;
+  }
+
+  /* tag-row を grid にしない */
+  .tag-row,
+  .term-tags,
+  .term-related,
+  #termsTagQuickLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
   .three-col {
     grid-template-columns: 1fr;
   }
 
-  .terms-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
+  .control-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .conj-table {
+    font-size: 0.88rem;
+    min-width: 640px;
+  }
+
+  .conj-table th,
+  .conj-table td {
+    padding: 6px 8px;
+  }
+
+  .pagination {
+    gap: 6px;
+  }
+
+  .pagination .button,
+  .pagination .button.secondary {
+    width: auto;
+    min-width: 44px;
+    padding: 8px 12px;
+  }
+}
+
+/* さらに細い画面 */
+@media (max-width: 380px) {
+  .container {
+    width: min(100% - 14px, 1120px);
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .term-card {
+    padding: 12px;
+  }
+
+  .term-word {
+    font-size: 0.96rem;
+  }
+
+  .term-meaning li,
+  .term-note,
+  .term-aliases {
+    font-size: 0.9rem;
+  }
+
+  .tag-button,
+  .badge,
+  .tag-chip {
+    font-size: 0.82rem;
+    padding: 4px 8px;
+    min-height: 30px;
+  }
+
+  .conj-table {
+    min-width: 580px;
   }
 }
