@@ -315,18 +315,13 @@
     function poemMatchesAnyTerm(poem, terms) {
         if (!Array.isArray(terms) || !terms.length) return false;
 
-        if (typeof poemMatchesTerm === "function") {
-            return terms.some((term) => poemMatchesTerm(poem, term, true));
-        }
-
         const joined = [
             poem.text || "",
             poem.kana || "",
             ...(Array.isArray(poem.tokens) ? poem.tokens : []),
             ...(Array.isArray(poem.search_tokens) ? poem.search_tokens : []),
-            ...(Array.isArray(poem.keywords) ? poem.keywords : []),
         ]
-            .join("")
+            .join(" ")
             .toString();
 
         const normalizedJoined = normalize(joined);
