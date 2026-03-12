@@ -11,7 +11,7 @@
         ANALYSIS_DELAY: 5,
 
         // 各ランキングの表示件数
-        RANK_LIMIT: 30,
+        RANK_LIMIT: 10,
 
         // 月の共起語の表示件数
         COOC_LIMIT: 10,
@@ -23,11 +23,14 @@
         BAR_SCALE: 3,
 
         // 矢印比較用スナップショットの更新間隔
-        RANK_SNAPSHOT_INTERVAL: 50,
+        RANK_SNAPSHOT_INTERVAL: 20,
 
         // 解析中和歌の表示上限
         CURRENT_POEM_MAX_LENGTH: 60,
         CURRENT_POEM_KANA_MAX_LENGTH: 60,
+
+        // 長歌の長さ
+        LONG_POEM_MIN_TOKENS: 6,
     };
 
     const DICTIONARY_URL = "./data/classical_terms.json";
@@ -39,7 +42,8 @@
         "./data/poems3.json",
         "./data/poems4.json",
         "./data/poems5.json",
-        "./data/poems6.json"
+        "./data/poems6.json",
+        "./data/poems7.json"
     ];
 
     const NON_INDEPENDENT_TOKENS = new Set([
@@ -69,6 +73,7 @@
             independentWords: [],
             moon: [],
             followers: [],
+            longPoemLengths: [],
         },
 
         // 初回スナップショット取得済みか
@@ -81,6 +86,7 @@
             independentWords: false,
             moon: false,
             followers: false,
+            longPoemLengths: false,
         }
     };
 
@@ -95,6 +101,7 @@
         makuraFollowers: new Map(),
         tagDistribution: new Map(),
         conjugationCounts: new Map(),
+        longPoemLengths: new Map(),
     };
 
     const elements = {
@@ -113,6 +120,7 @@
         progressBar: document.getElementById("statsProgressBar"),
         currentPoem: document.getElementById("statsCurrentPoem"),
         currentPoemMeta: document.getElementById("statsCurrentPoemMeta"),
+        longPoemLengths: document.getElementById("statsLongPoemLengths"),
     };
 
     function normalize(text) {
@@ -221,12 +229,24 @@
         return { text: "→→", className: "is-stay" };
     }
 
-    function getLastKanaBlock(kana) {
-        const parts = String(kana || "")
+    function getLastToken(tokens) {
+        if (!Array.isArray(tokens) || tokens.length === 0) return "";
+        return tokens[tokens.length - 1];
+    }
+
+    function splitKanaBlocks(kana) {
+        return String(kana || "")
             .trim()
             .split(/\s+/)
+            .map((v) => String(v || "").trim())
             .filter(Boolean);
-        return parts.length ? parts[parts.length - 1] : "";
+    }
+
+    function getPhraseBlocks(poem) {
+        if (Array.isArray(poem.tokens) && poem.tokens.length > 0) {
+            return poem.tokens;
+        }
+        return splitKanaBlocks(poem.kana);
     }
 
     function isIndependentToken(token) {
@@ -407,6 +427,9 @@
         state.previousRankItems.followers = cloneRankItems(
             sortMapEntries(followerTopMap).slice(0, CONFIG.RANK_LIMIT)
         );
+        state.previousRankItems.longPoemLengths = cloneRankItems(
+            sortMapEntries(stats.longPoemLengths).slice(0, CONFIG.RANK_LIMIT)
+        );
 
         state.hasRankSnapshot.makura = true;
         state.hasRankSnapshot.plants = true;
@@ -416,6 +439,7 @@
         state.hasRankSnapshot.independentWords = true;
         state.hasRankSnapshot.moon = true;
         state.hasRankSnapshot.followers = true;
+        state.hasRankSnapshot.longPoemLengths = true;
     }
 
     function renderTagDistribution() {
@@ -616,19 +640,30 @@
             CONFIG.RANK_LIMIT,
             "回"
         );
+
+        renderBarListFromMap(
+            stats.longPoemLengths,
+            elements.longPoemLengths,
+            state.previousRankItems.longPoemLengths,
+            "longPoemLengths",
+            CONFIG.RANK_LIMIT,
+            "首"
+        );
     }
 
     function analyzePoem(poem, prepared) {
-        const tokens = Array.isArray(poem.search_tokens)
+        const searchTokens = Array.isArray(poem.search_tokens)
             ? poem.search_tokens
             : Array.isArray(poem.tokens)
                 ? poem.tokens
                 : [];
 
+        const phraseTokens = getPhraseBlocks(poem);
+
         const joined = normalize([
             poem.text || "",
             poem.kana || "",
-            ...tokens
+            ...searchTokens
         ].join(" "));
 
         prepared.makura.forEach((entry) => {
@@ -655,19 +690,24 @@
             }
         });
 
-        const endingBlock = getLastKanaBlock(poem.kana);
+        const endingBlock = phraseTokens.at(-1) || "";
         if (endingBlock) {
             increment(stats.endingBlocks, endingBlock);
         }
 
-        tokens.forEach((token) => {
+        const tokenLength = phraseTokens.length;
+        if (tokenLength >= CONFIG.LONG_POEM_MIN_TOKENS) {
+            increment(stats.longPoemLengths, `${tokenLength}句`);
+        }
+
+        searchTokens.forEach((token) => {
             const word = String(token || "").trim();
             if (!isIndependentToken(word)) return;
             increment(stats.independentWords, word);
         });
 
         if (joined.includes(normalize("月"))) {
-            tokens.forEach((token) => {
+            searchTokens.forEach((token) => {
                 const word = String(token || "").trim();
                 if (!word || word === "月" || word.length <= 1) return;
                 increment(stats.moon, word);
@@ -675,10 +715,10 @@
         }
 
         prepared.makura.forEach((entry) => {
-            for (let i = 0; i < tokens.length; i++) {
-                const token = normalize(tokens[i]);
+            for (let i = 0; i < searchTokens.length; i++) {
+                const token = normalize(searchTokens[i]);
                 if (entry.forms.includes(token)) {
-                    const next = String(tokens[i + 1] || "").trim();
+                    const next = String(searchTokens[i + 1] || "").trim();
                     if (next) {
                         incrementNested(stats.makuraFollowers, entry.word, next);
                     }
