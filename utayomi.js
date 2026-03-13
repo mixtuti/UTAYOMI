@@ -74,8 +74,11 @@ const keywordAssociations = {
 
 const generationElements = {
   generatorTabButton: document.getElementById("generatorTabButton"),
+  generatorV2TabButton: document.getElementById("generatorV2TabButton"),
   assistTabButton: document.getElementById("assistTabButton"),
+
   generatorModePanel: document.getElementById("generatorModePanel"),
+  generatorV2ModePanel: document.getElementById("generatorV2ModePanel"),
   assistModePanel: document.getElementById("assistModePanel"),
 
   generatorForm: document.getElementById("generatorForm"),
@@ -248,6 +251,10 @@ function bindGenerationEvents() {
     setModeTab("assist"),
   );
 
+  generationElements.generatorV2TabButton?.addEventListener("click", () =>
+    setModeTab("generator-v2"),
+  );
+
   generationElements.generateAutoPoemButton?.addEventListener(
     "click",
     handleGenerateAutoPoem,
@@ -315,6 +322,8 @@ function setModeTab(mode) {
   generationState.currentTab = mode;
 
   const isGenerator = mode === "generator";
+  const isGeneratorV2 = mode === "generator-v2";
+  const isAssist = mode === "assist";
 
   if (generationElements.generatorTabButton) {
     generationElements.generatorTabButton.className = isGenerator
@@ -326,13 +335,23 @@ function setModeTab(mode) {
     );
   }
 
+  if (generationElements.generatorV2TabButton) {
+    generationElements.generatorV2TabButton.className = isGeneratorV2
+      ? "button"
+      : "button secondary";
+    generationElements.generatorV2TabButton.setAttribute(
+      "aria-pressed",
+      String(isGeneratorV2),
+    );
+  }
+
   if (generationElements.assistTabButton) {
-    generationElements.assistTabButton.className = isGenerator
-      ? "button secondary"
-      : "button";
+    generationElements.assistTabButton.className = isAssist
+      ? "button"
+      : "button secondary";
     generationElements.assistTabButton.setAttribute(
       "aria-pressed",
-      String(!isGenerator),
+      String(isAssist),
     );
   }
 
@@ -340,8 +359,12 @@ function setModeTab(mode) {
     generationElements.generatorModePanel.hidden = !isGenerator;
   }
 
+  if (generationElements.generatorV2ModePanel) {
+    generationElements.generatorV2ModePanel.hidden = !isGeneratorV2;
+  }
+
   if (generationElements.assistModePanel) {
-    generationElements.assistModePanel.hidden = isGenerator;
+    generationElements.assistModePanel.hidden = !isAssist;
   }
 }
 
@@ -354,8 +377,8 @@ function refreshGeneratorAuthorsByThreshold() {
   const authors = useThreshold
     ? getMajorAuthors(generationState.minAuthorPoems)
     : [...new Set(state.poems.map((poem) => poem.author).filter(Boolean))].sort(
-        (a, b) => a.localeCompare(b, "ja"),
-      );
+      (a, b) => a.localeCompare(b, "ja"),
+    );
 
   generationElements.generatorAuthorFilter.innerHTML =
     '<option value="">指定なし</option>';
@@ -808,25 +831,6 @@ function poemContainsKeyword(poem, keyword) {
     kana.includes(safeKeyword) ||
     tokens.includes(safeKeyword)
   );
-}
-
-function buildLinePools(poems, options = {}) {
-  const pools = [[], [], [], [], []];
-
-  poems.forEach((poem) => {
-    const lines = getPoemLinesFromData(poem);
-    if (lines.length < 5) return;
-
-    lines.slice(0, 5).forEach((line, index) => {
-      pools[index].push({
-        line,
-        source: poem,
-        score: scoreLine(line, poem, options, index),
-      });
-    });
-  });
-
-  return pools.map((pool) => pool.sort((a, b) => b.score - a.score));
 }
 
 function scoreLine(line, poem, options, index) {

@@ -224,6 +224,10 @@
         <button id="generatorTabButton" class="button" type="button" data-mode-tab="generator" aria-pressed="true">
           AI歌人風
         </button>
+        <button id="generatorV2TabButton" class="button secondary" type="button" data-mode-tab="generator-v2"
+          aria-pressed="false">
+          AI歌詠み ver2(工事中)
+        </button>
         <button id="assistTabButton" class="button secondary" type="button" data-mode-tab="assist" aria-pressed="false">
           共作モード
         </button>
@@ -368,6 +372,120 @@
             <details class="sub-panel generated-source-panel">
               <summary>参照した条件・候補語のメモ</summary>
               <div id="generatedPoemSource" class="muted">
+                後で、使用した条件や参照候補を表示できます。
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <section id="generatorV2ModePanel" class="mode-panel" data-mode-panel="generator-v2" hidden>
+          <div class="section-head compact-head">
+            <div>
+              <h3>AI歌詠み ver2・本格生成</h3>
+              <p class="muted">
+                枕詞・関連語・地名・季語などを見ながら、自然さ重視で生成します。
+              </p>
+            </div>
+            <div class="button-row">
+              <button id="generateAutoPoemV2Button" class="button" type="button">
+                一首生成
+              </button>
+              <button id="generateRandomPoemV2Button" class="button secondary" type="button">
+                おまかせ生成
+              </button>
+            </div>
+          </div>
+
+          <form id="generatorV2Form" class="control-stack">
+            <div class="control-grid three-col">
+              <label>
+                <span>季節</span>
+                <select id="generatorV2SeasonFilter">
+                  <option value="">指定なし</option>
+                  <option value="春">春</option>
+                  <option value="夏">夏</option>
+                  <option value="秋">秋</option>
+                  <option value="冬">冬</option>
+                </select>
+              </label>
+
+              <label>
+                <span>出典</span>
+                <select id="generatorV2CollectionFilter">
+                  <option value="">指定なし</option>
+                </select>
+              </label>
+
+              <label>
+                <span>作者</span>
+                <select id="generatorV2AuthorFilter">
+                  <option value="">指定なし</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="control-grid three-col">
+              <label>
+                <span>語句</span>
+                <input id="generatorV2KeywordInput" type="text" placeholder="例: 月、雪、春、夢" />
+              </label>
+
+              <label>
+                <span>語句の扱い</span>
+                <select id="generatorV2KeywordModeSelect">
+                  <option value="prefer">できれば入れる</option>
+                  <option value="must">必ず入れる</option>
+                  <option value="theme">雰囲気で寄せる</option>
+                </select>
+              </label>
+
+              <label>
+                <span>整え方</span>
+                <select id="generatorV2ShapeSelect">
+                  <option value="57577">五七五七七寄り</option>
+                  <option value="auto">自動</option>
+                  <option value="free">意味優先</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="checkbox-group">
+              <label class="checkbox-row compact">
+                <input id="generatorV2PreferKigoToggle" type="checkbox" checked />
+                <span>季語を優先して拾う</span>
+              </label>
+              <label class="checkbox-row compact">
+                <input id="generatorV2PreferNaturalToggle" type="checkbox" checked />
+                <span>自然な接続を優先する</span>
+              </label>
+              <label class="checkbox-row compact">
+                <input id="generatorV2UseMakuraToggle" type="checkbox" checked />
+                <span>枕詞の接続を厳しめに見る</span>
+              </label>
+            </div>
+          </form>
+
+          <div class="sub-panel generated-output-panel">
+            <div class="section-head compact-head">
+              <h3>生成結果</h3>
+              <div class="button-row">
+                <button id="copyGeneratedPoemV2Button" class="button secondary" type="button">
+                  コピー
+                </button>
+              </div>
+            </div>
+
+            <div id="generatedPoemV2Meta" class="active-filters generated-meta">
+              <span class="filter-chip">まだ生成していません</span>
+            </div>
+
+            <div id="generatedPoemV2Result" class="generated-poem-display empty-state">
+              ここに本格生成された一首を表示します。
+            </div>
+
+            <details class="sub-panel generated-source-panel">
+              <summary>参照した条件・候補語のメモ</summary>
+              <div id="generatedPoemV2Source" class="muted">
                 後で、使用した条件や参照候補を表示できます。
               </div>
             </details>
@@ -562,6 +680,38 @@
         <a href="terms.html" class="button secondary">登録単語一覧</a>
       </div>
     </section>
+
+    <div id="poemDetailModal" class="modal hidden">
+      <div class="modal-content poem-detail-modal-content">
+        <button id="closeDetail" type="button" class="detail-close">×</button>
+
+        <div class="detail-header">
+          <h2 id="detailTitle"></h2>
+          <div id="detailMetaLine" class="detail-meta-line"></div>
+        </div>
+
+        <div id="detailBody" class="detail-body">
+          <div id="detailPoemText" class="detail-poem-text"></div>
+          <div id="detailKana" class="detail-kana"></div>
+
+          <section id="detailTagSection" class="detail-section hidden">
+            <h3>タグ</h3>
+            <div id="detailTags" class="detail-tags"></div>
+          </section>
+
+          <section id="detailWordsSection" class="detail-section hidden">
+            <h3>語句と意味</h3>
+            *結果は必ずしも正確ではなく、一致したものを表示しています。
+            <div id="detailWords" class="detail-words"></div>
+          </section>
+
+          <section id="detailMetaInfoSection" class="detail-section hidden">
+            <h3>補足情報</h3>
+            <div id="detailMetaInfo" class="detail-meta-info"></div>
+          </section>
+        </div>
+      </div>
+    </div>
   </main>
 
   <template id="poemCardTemplate">
@@ -576,6 +726,7 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="app.js"></script>
   <script src="utayomi.js"></script>
+  <script src="utayomi_v2.js"></script>
   <script src="favorite.js"></script>
   <script src="study.js"></script>
 </body>

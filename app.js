@@ -1,11 +1,16 @@
 const state = {
   poems: [],
   kigoDictionary: [],
+  termDictionary: [],
   currentResults: [],
   currentPage: 1,
   resultsPerPage: 20,
   currentHighlightTerms: [],
 };
+
+window.state = state;
+const params = new URLSearchParams(window.location.search);
+const showPoemEx = params.has("ura");
 
 const SKIP_NEXT_WORDS = new Set([
   "の", "に", "を", "は", "が", "と", "も", "へ", "や", "か",
@@ -124,6 +129,22 @@ const elements = {
 
   poemCardTemplate: document.getElementById("poemCardTemplate"),
   tagButtons: document.querySelectorAll(".tag-button"),
+
+  poemDetailModal: document.getElementById("poemDetailModal"),
+  closeDetail: document.getElementById("closeDetail"),
+  detailTitle: document.getElementById("detailTitle"),
+  detailMetaLine: document.getElementById("detailMetaLine"),
+  detailPoemText: document.getElementById("detailPoemText"),
+  detailKana: document.getElementById("detailKana"),
+
+  detailTagSection: document.getElementById("detailTagSection"),
+  detailTags: document.getElementById("detailTags"),
+
+  detailWordsSection: document.getElementById("detailWordsSection"),
+  detailWords: document.getElementById("detailWords"),
+
+  detailMetaInfoSection: document.getElementById("detailMetaInfoSection"),
+  detailMetaInfo: document.getElementById("detailMetaInfo"),
 };
 
 async function loadData() {
@@ -136,8 +157,12 @@ async function loadData() {
       "./data/poems4.json",
       "./data/poems5.json",
       "./data/poems6.json",
-      "./data/poems7.json"
+      "./data/poems7.json",
     ];
+
+    if (showPoemEx) {
+      poemFiles.push("./data/poemsex.json");
+    }
 
     const poemRequests = poemFiles.map(async (file) => {
       try {
@@ -149,19 +174,27 @@ async function loadData() {
       }
     });
 
-    const [poemArrays, kigoResponse] = await Promise.all([
+    const [poemArrays, kigoResponse, termResponse] = await Promise.all([
       Promise.all(poemRequests),
-      fetch("./data/kigo.json")
+      fetch("./data/kigo.json"),
+      fetch("./data/classical_terms.json")
     ]);
 
     if (!kigoResponse.ok) {
       throw new Error("季語データの読み込みに失敗しました");
     }
 
+    if (!termResponse.ok) {
+      throw new Error("単語辞書データの読み込みに失敗しました");
+    }
+
     state.poems = poemArrays.flat();
     state.kigoDictionary = await kigoResponse.json();
+    state.termDictionary = await termResponse.json();
+    window.state = state;
 
     initializePoemCaches();
+    initializeTermCaches();
 
     populateCollectionFilter();
     populateThemeFilterFromData();
@@ -221,6 +254,32 @@ function initializePoemCaches() {
       kigoEntries: null,
       kigoWords: null,
       kigoSeasons: null,
+    };
+  });
+}
+
+function initializeTermCaches() {
+  state.termDictionary = (Array.isArray(state.termDictionary) ? state.termDictionary : []).map((term) => {
+    const forms = [
+      term.word,
+      term.reading,
+      ...(Array.isArray(term.surface_forms) ? term.surface_forms : []),
+      ...(Array.isArray(term.aliases) ? term.aliases : []),
+      ...(Array.isArray(term.variants) ? term.variants : [])
+    ]
+      .map((v) => String(v || "").trim())
+      .filter(Boolean);
+
+    const normalizedForms = [...new Set(
+      forms.map((v) => normalizeText(v)).filter(Boolean)
+    )];
+
+    return {
+      ...term,
+      __cache: {
+        forms,
+        normalizedForms
+      }
     };
   });
 }
@@ -380,6 +439,7 @@ function appendOptions(selectElement, values, countMap = null) {
 
   selectElement.appendChild(fragment);
 }
+
 /* -------------------------
    季語自動判定
 ------------------------- */
@@ -484,6 +544,17 @@ function createPoemCard(poem, options = {}) {
   renderPoemTags(tags, poem);
 
   article.dataset.id = poem.id || "";
+  article.tabIndex = 0;
+  article.style.cursor = "pointer";
+
+  article.addEventListener("click", () => openPoemDetail(poem));
+  article.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openPoemDetail(poem);
+    }
+  });
+
   return article;
 }
 
@@ -997,6 +1068,295 @@ function findNextContentWord(tokens, startIndex) {
 }
 
 /* -------------------------
+   歌詳細モーダル
+------------------------- */
+
+function openPoemDetail(poem) {
+  if (!elements.poemDetailModal) return;
+
+  elements.poemDetailModal.classList.remove("hidden");
+
+  const title =
+    poem.title ||
+    poem.collection ||
+    poem.source ||
+    "和歌詳細";
+
+  if (elements.detailTitle) {
+    elements.detailTitle.textContent = title;
+  }
+
+  if (elements.detailMetaLine) {
+    const metaParts = [
+      poem.collection || poem.source || "",
+      poem.book || "",
+      poem.poem_no ? `歌番号 ${poem.poem_no}` : (poem.number ? `歌番号 ${poem.number}` : ""),
+      poem.author || ""
+    ].filter(Boolean);
+
+    elements.detailMetaLine.textContent = metaParts.join(" ｜ ");
+  }
+
+  if (elements.detailPoemText) {
+    elements.detailPoemText.textContent = poem.text || "";
+  }
+
+  if (elements.detailKana) {
+    if (poem.kana) {
+      elements.detailKana.textContent = poem.kana;
+      elements.detailKana.classList.remove("hidden");
+    } else {
+      elements.detailKana.textContent = "";
+      elements.detailKana.classList.add("hidden");
+    }
+  }
+
+  renderDetailTags(poem);
+  renderDetailWords(poem);
+  renderDetailMetaInfo(poem);
+}
+
+function renderDetailTags(poem) {
+  if (!elements.detailTagSection || !elements.detailTags) return;
+
+  elements.detailTags.innerHTML = "";
+
+  const tags = normalizeTagList(poem.tag);
+
+  if (!tags.length) {
+    elements.detailTagSection.classList.add("hidden");
+    return;
+  }
+
+  elements.detailTagSection.classList.remove("hidden");
+
+  tags.forEach((tag) => {
+    const span = document.createElement("span");
+    span.className = "detail-tag";
+    span.textContent = tag;
+    elements.detailTags.appendChild(span);
+  });
+}
+
+function renderDetailWords(poem) {
+  if (!elements.detailWordsSection || !elements.detailWords) return;
+
+  elements.detailWords.innerHTML = "";
+
+  const matchedTerms = getMatchedTermsForPoem(poem);
+
+  if (!matchedTerms.length) {
+    elements.detailWordsSection.classList.add("hidden");
+    return;
+  }
+
+  elements.detailWordsSection.classList.remove("hidden");
+
+  matchedTerms.forEach((term) => {
+    const wrap = document.createElement("div");
+    wrap.className = "word-meaning-item";
+
+    const word = document.createElement("div");
+    word.className = "word-meaning-word";
+    word.textContent = term.word || "";
+
+    const meta = document.createElement("div");
+    meta.className = "detail-meta-line";
+    meta.textContent = [
+      term.reading || "",
+      term.partOfSpeech || ""
+    ].filter(Boolean).join(" ｜ ");
+
+    const meaning = document.createElement("div");
+    meaning.className = "word-meaning-text";
+    meaning.textContent = Array.isArray(term.meaning)
+      ? term.meaning.join(" / ")
+      : (term.meaning || "意味未登録");
+
+    wrap.appendChild(word);
+
+    if (meta.textContent) {
+      wrap.appendChild(meta);
+    }
+
+    wrap.appendChild(meaning);
+
+    if (Array.isArray(term.tags) && term.tags.length) {
+      const tagBox = document.createElement("div");
+      tagBox.className = "detail-tags";
+      tagBox.style.marginTop = "8px";
+
+      term.tags.forEach((tag) => {
+        const span = document.createElement("span");
+        span.className = "detail-tag";
+        span.textContent = tag;
+        tagBox.appendChild(span);
+      });
+
+      wrap.appendChild(tagBox);
+    }
+
+    if (term.note) {
+      const note = document.createElement("div");
+      note.className = "word-meaning-text";
+      note.style.marginTop = "8px";
+      note.textContent = `注: ${term.note}`;
+      wrap.appendChild(note);
+    }
+
+    elements.detailWords.appendChild(wrap);
+  });
+}
+
+function renderDetailMetaInfo(poem) {
+  if (!elements.detailMetaInfoSection || !elements.detailMetaInfo) return;
+
+  elements.detailMetaInfo.innerHTML = "";
+
+  const metaInfo = normalizeMetaInfo(poem.meta_info);
+
+  const entries = Object.entries(metaInfo).filter(([key, value]) => {
+    return String(key).trim() && String(value).trim();
+  });
+
+  if (!entries.length) {
+    elements.detailMetaInfoSection.classList.add("hidden");
+    return;
+  }
+
+  elements.detailMetaInfoSection.classList.remove("hidden");
+
+  entries.forEach(([key, value]) => {
+    const item = document.createElement("div");
+    item.className = "meta-info-item";
+
+    const keyEl = document.createElement("div");
+    keyEl.className = "meta-info-key";
+    keyEl.textContent = key;
+
+    const valueEl = document.createElement("div");
+    valueEl.className = "meta-info-value";
+    valueEl.textContent = value;
+
+    item.appendChild(keyEl);
+    item.appendChild(valueEl);
+    elements.detailMetaInfo.appendChild(item);
+  });
+}
+
+function normalizeTagList(tagValue) {
+  if (!tagValue) return [];
+
+  if (Array.isArray(tagValue)) {
+    return [...new Set(tagValue.map(v => String(v).trim()).filter(Boolean))];
+  }
+
+  if (typeof tagValue === "string") {
+    return [...new Set(
+      tagValue.split(/[,\n、]/).map(v => v.trim()).filter(Boolean)
+    )];
+  }
+
+  return [];
+}
+
+function normalizeWordEntries(wordsValue) {
+  if (!wordsValue) return [];
+
+  if (!Array.isArray(wordsValue)) return [];
+
+  const result = [];
+
+  wordsValue.forEach((item) => {
+    if (!item) return;
+
+    if (typeof item === "string") {
+      result.push({
+        word: item,
+        meaning: ""
+      });
+      return;
+    }
+
+    if (typeof item === "object") {
+      result.push({
+        word: String(item.word || item.text || item.name || "").trim(),
+        meaning: String(item.meaning || item.description || item.note || "").trim()
+      });
+    }
+  });
+
+  return result.filter(item => item.word);
+}
+
+function normalizeMetaInfo(metaValue) {
+  if (!metaValue) return {};
+
+  if (typeof metaValue === "object" && !Array.isArray(metaValue)) {
+    return metaValue;
+  }
+
+  return {};
+}
+
+function getMatchedTermsForPoem(poem) {
+  const cache = getPoemCache(poem);
+
+  const haystacks = [
+    cache.normalizedText,
+    cache.normalizedKana,
+    ...cache.normalizedRawTokens,
+    ...cache.normalizedSearchTokens,
+    cache.joinedSearchTokens
+  ].filter(Boolean);
+
+  const matched = [];
+
+  state.termDictionary.forEach((term) => {
+    const forms = term.__cache?.normalizedForms || [];
+    if (!forms.length) return;
+
+    const found = forms.some((form) => {
+      if (!form) return false;
+      if (shouldSkipLooseMatch(term, form)) return false;
+      return haystacks.some((target) => target.includes(form));
+    });
+
+    if (found) {
+      matched.push(term);
+    }
+  });
+
+  return sortMatchedTerms(matched);
+}
+
+function shouldSkipLooseMatch(term, form) {
+  const pos = String(term.partOfSpeech || "");
+  if (form.length >= 2) return false;
+
+  return (
+    pos.includes("助動詞") ||
+    pos.includes("助詞") ||
+    pos.includes("動詞")
+  );
+}
+
+function sortMatchedTerms(terms) {
+  return [...terms].sort((a, b) => {
+    const aLen = Math.max(...((a.__cache?.forms || [a.word || ""]).map((v) => String(v).length)));
+    const bLen = Math.max(...((b.__cache?.forms || [b.word || ""]).map((v) => String(v).length)));
+
+    if (bLen !== aLen) return bLen - aLen;
+    return String(a.word || "").localeCompare(String(b.word || ""), "ja");
+  });
+}
+
+function closePoemDetail() {
+  if (!elements.poemDetailModal) return;
+  elements.poemDetailModal.classList.add("hidden");
+}
+
+/* -------------------------
    UI操作
 ------------------------- */
 
@@ -1153,6 +1513,20 @@ elements.verticalModeToggle?.addEventListener("change", handleVerticalModeToggle
 
 elements.tagButtons?.forEach((button) => {
   button.addEventListener("click", handleTagButtonClick);
+});
+
+elements.closeDetail?.addEventListener("click", closePoemDetail);
+
+elements.poemDetailModal?.addEventListener("click", (event) => {
+  if (event.target === elements.poemDetailModal) {
+    closePoemDetail();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closePoemDetail();
+  }
 });
 
 loadData();

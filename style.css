@@ -1552,3 +1552,137 @@ hr {
     max-height: 8em;
     overflow: hidden;
 }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  z-index: 9999;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.poem-detail-modal-content {
+  background: #fff;
+  width: min(900px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.detail-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.detail-header {
+  margin-bottom: 20px;
+}
+
+.detail-header h2 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+}
+
+.detail-meta-line {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.detail-body {
+  display: grid;
+  gap: 20px;
+}
+
+.detail-poem-text {
+  font-size: 1.7rem;
+  line-height: 1.9;
+  font-weight: 700;
+  white-space: pre-wrap;
+}
+
+.detail-kana {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.detail-section h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.detail-tag {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f2f2f2;
+  font-size: 0.9rem;
+}
+
+.detail-words {
+  display: grid;
+  gap: 12px;
+}
+
+.word-meaning-item {
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #fafafa;
+}
+
+.word-meaning-word {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.word-meaning-text {
+  color: #444;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.detail-meta-info {
+  display: grid;
+  gap: 10px;
+}
+
+.meta-info-item {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.meta-info-key {
+  font-weight: 700;
+}
+
+.meta-info-value {
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
