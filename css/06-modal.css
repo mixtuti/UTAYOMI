@@ -1,0 +1,111 @@
+/* ========================================
+   06-modal.css
+   詳細表示モーダル
+======================================== */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  z-index: 9999;
+}
+
+.poem-detail-modal-content {
+  background: #fff;
+  width: min(900px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.detail-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.detail-header {
+  margin-bottom: 20px;
+}
+
+.detail-header h2 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+}
+
+.detail-meta-line,
+.detail-kana {
+  color: #666;
+}
+
+.detail-meta-line {
+  font-size: 0.95rem;
+}
+
+.detail-poem-text {
+  font-size: 1.7rem;
+  line-height: 1.9;
+  font-weight: 700;
+  white-space: pre-wrap;
+}
+
+.detail-kana,
+.word-meaning-text,
+.meta-info-value {
+  white-space: pre-wrap;
+}
+
+.detail-kana {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.detail-section h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+
+.word-meaning-item {
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #fafafa;
+}
+
+.word-meaning-word,
+.meta-info-key {
+  font-weight: 700;
+}
+
+.word-meaning-word {
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.word-meaning-text {
+  color: #444;
+  line-height: 1.8;
+}
+
+.meta-info-item {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.meta-info-value {
+  line-height: 1.8;
+}

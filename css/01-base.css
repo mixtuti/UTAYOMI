@@ -1,0 +1,85 @@
+/* ========================================
+   01-base.css
+   リセット・全体の基本タイポグラフィ・汎用要素
+======================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.8;
+  font-family:
+    "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "YuMincho",
+    serif;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(rgba(80, 58, 34, 0.045) 0.9px, transparent 0.9px),
+    radial-gradient(rgba(80, 58, 34, 0.03) 0.9px, transparent 0.9px),
+    linear-gradient(180deg, #f8f3ea 0%, #f3ece0 48%, #efe6d8 100%);
+  background-size:
+    18px 18px,
+    18px 18px,
+    100% 100%;
+  background-position:
+    0 0,
+    9px 9px,
+    0 0;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+h1 {
+  margin: 0 0 14px;
+  font-size: clamp(2.1rem, 4.2vw, 3.3rem);
+  line-height: 1.2;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 1.2rem;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gold-soft);
+}
+
+h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+p {
+  margin-top: 0;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+mark {
+  background: linear-gradient(transparent 58%, #e7d18d 58%);
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.muted {
+  margin: 0;
+  color: var(--muted);
+}

@@ -2,15 +2,23 @@
 <html lang="ja">
 
 <head>
+  <!-- 文字コードを UTF-8 に設定 -->
   <meta charset="UTF-8" />
+
+  <!-- スマホでも見やすいように表示倍率を調整 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- ブラウザのタブに表示されるタイトル -->
   <title>和歌コーパス検索</title>
+
+  <!-- 検索エンジン向けのページ説明 -->
   <meta name="description" content="万葉集・古今和歌集・新古今和歌集などをもとに、語句検索や後続語検索、歌詠み支援ができる和歌コーパスサイトです。" />
 
+  <!-- ファビコン設定 -->
   <link rel="icon" href="./image/icon.png" type="image/png" />
   <link rel="apple-touch-icon" href="./image/icon.png" />
 
+  <!-- OGP: SNS でシェアしたときの表示情報 -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="和歌コーパス検索" />
   <meta property="og:description" content="和歌の語句検索、後続語検索、歌詠み支援ができる和歌コーパスサイト。" />
@@ -18,15 +26,18 @@
   <meta property="og:url" content="https://mixtuti.github.io/" />
   <meta property="og:site_name" content="和歌コーパス検索" />
 
+  <!-- X(Twitter) 共有時の表示情報 -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="和歌コーパス検索" />
   <meta name="twitter:description" content="和歌の語句検索、後続語検索、歌詠み支援ができる和歌コーパスサイト。" />
   <meta name="twitter:image" content="https://mixtuti.github.io/UTAYOMI/Image/icon.png" />
 
-  <link rel="stylesheet" href="style.css" />
+  <!-- ページ全体の見た目を定義する CSS -->
+  <link rel="stylesheet" href="css/main.css" />
 </head>
 
 <body>
+  <!-- サイト上部の紹介エリア -->
   <header class="site-header">
     <div class="container">
       <p class="eyebrow">和歌・俳句企画向け</p>
@@ -38,21 +49,26 @@
     </div>
   </header>
 
+  <!-- メインコンテンツ全体 -->
   <main class="container main-grid">
+    <!-- 今日の一首 / ランダム表示エリア -->
     <section class="card hero-card full-width">
       <div class="section-head">
         <h2>今日の一首</h2>
         <div class="button-row">
+          <!-- ランダムで別の和歌を表示するボタン -->
           <button id="shufflePoemButton" class="button secondary" type="button">
             別の一首
           </button>
         </div>
       </div>
 
+      <!-- JavaScript でランダム和歌を表示する場所 -->
       <div id="randomPoem" class="random-poem">
         <p>読み込み中...</p>
       </div>
 
+      <!-- よく使うテーマへすぐ飛べるボタン群 -->
       <div class="quick-links">
         <h3>すぐ探す</h3>
         <div class="tag-row">
@@ -65,18 +81,23 @@
       </div>
     </section>
 
+    <!-- 語句検索エリア -->
     <section class="card controls-card">
       <h2>語句検索</h2>
 
+      <!-- 検索条件入力フォーム -->
       <form id="searchForm" class="control-stack">
         <label>
           <span>検索語</span>
+          <!-- キーワード入力欄 -->
           <input id="searchInput" type="text" placeholder="例: 月、春、暁の" />
         </label>
 
+        <!-- 絞り込み条件 -->
         <div class="control-grid">
           <label>
             <span>出典</span>
+            <!-- JavaScript で出典一覧を追加する想定 -->
             <select id="collectionFilter">
               <option value="">すべて</option>
             </select>
@@ -110,6 +131,7 @@
 
           <label>
             <span>季語</span>
+            <!-- JavaScript で季語一覧を入れる想定 -->
             <select id="kigoFilter">
               <option value="">すべて</option>
             </select>
@@ -119,17 +141,20 @@
         <div class="control-grid">
           <label>
             <span>詠み人</span>
+            <!-- JavaScript で作者一覧を入れる想定 -->
             <select id="authorFilter">
               <option value="">すべて</option>
             </select>
           </label>
         </div>
 
+        <!-- かな表記も検索対象に含めるかどうか -->
         <label class="checkbox-row">
           <input id="kanaSearchToggle" type="checkbox" />
           <span>かな欄も検索する</span>
         </label>
 
+        <!-- 検索実行 / 条件クリアボタン -->
         <div class="button-row">
           <button type="submit" class="button">検索する</button>
           <button id="clearSearchButton" type="button" class="button secondary">
@@ -138,34 +163,25 @@
         </div>
       </form>
 
+      <!-- よく使われる語句のショートカット -->
       <div class="sub-panel">
         <h3>人気語句</h3>
         <div class="tag-row">
-          <button class="tag-button" type="button" data-keyword="月">
-            月
-          </button>
-          <button class="tag-button" type="button" data-keyword="花">
-            花
-          </button>
-          <button class="tag-button" type="button" data-keyword="春">
-            春
-          </button>
-          <button class="tag-button" type="button" data-keyword="秋">
-            秋
-          </button>
-          <button class="tag-button" type="button" data-keyword="夢">
-            夢
-          </button>
-          <button class="tag-button" type="button" data-keyword="雪">
-            雪
-          </button>
+          <button class="tag-button" type="button" data-keyword="月">月</button>
+          <button class="tag-button" type="button" data-keyword="花">花</button>
+          <button class="tag-button" type="button" data-keyword="春">春</button>
+          <button class="tag-button" type="button" data-keyword="秋">秋</button>
+          <button class="tag-button" type="button" data-keyword="夢">夢</button>
+          <button class="tag-button" type="button" data-keyword="雪">雪</button>
         </div>
       </div>
     </section>
 
+    <!-- 後続語検索エリア -->
     <section class="card controls-card">
       <h2>後続語検索</h2>
 
+      <!-- 入力した語の次に来やすい語を調べるフォーム -->
       <form id="ngramForm" class="control-stack">
         <label>
           <span>起点語</span>
@@ -177,39 +193,52 @@
         </div>
       </form>
 
+      <!-- JavaScript で後続語ランキングを表示する場所 -->
       <div id="ngramResults" class="ngram-results empty-state">
         語を入力すると、次に来やすい語のランキングを表示します。
       </div>
     </section>
 
+    <!-- 検索結果表示エリア -->
     <section class="card results-card full-width">
       <div class="section-head">
         <div>
           <h2>検索結果</h2>
+          <!-- 検索件数や現在の状態を表示 -->
           <p id="searchSummary" class="muted">まだ検索していません。</p>
         </div>
 
+        <!-- 結果表示オプション -->
         <div class="result-options">
           <label class="checkbox-row compact">
+            <!-- 検索語を結果中で強調表示するか -->
             <input id="highlightToggle" type="checkbox" checked />
             <span>検索語をハイライト</span>
           </label>
 
-          <!-- <label class="checkbox-row compact">
+          <!-- 将来的に縦書き風表示を入れるためのコメントアウト済み機能 -->
+          <!--
+          <label class="checkbox-row compact">
             <input id="verticalModeToggle" type="checkbox" />
             <span>縦書き風表示</span>
-          </label> -->
+          </label>
+          -->
         </div>
       </div>
 
+      <!-- 現在有効な絞り込み条件を表示 -->
       <div id="activeFilters" class="active-filters" aria-live="polite"></div>
 
+      <!-- 検索結果一覧を表示 -->
       <div id="searchResults" class="results-list empty-state">
         ここに検索結果が表示されます。
       </div>
+
+      <!-- ページ送り UI を表示 -->
       <div id="pagination" class="pagination"></div>
     </section>
 
+    <!-- 歌詠みモード全体 -->
     <section class="card controls-card full-width">
       <div class="section-head">
         <div>
@@ -220,6 +249,7 @@
         </div>
       </div>
 
+      <!-- モード切り替えタブ -->
       <div class="mode-tabs" role="tablist" aria-label="歌詠みモード切り替え">
         <button id="generatorTabButton" class="button" type="button" data-mode-tab="generator" aria-pressed="true">
           AI歌人風
@@ -234,6 +264,7 @@
       </div>
 
       <div class="mode-panels">
+        <!-- 全自動生成モード -->
         <section id="generatorModePanel" class="mode-panel" data-mode-panel="generator">
           <div class="section-head compact-head">
             <div>
@@ -252,6 +283,7 @@
             </div>
           </div>
 
+          <!-- 自動生成の条件設定フォーム -->
           <form id="generatorForm" class="control-stack">
             <div class="control-grid three-col">
               <label>
@@ -326,6 +358,7 @@
               </label>
             </div>
 
+            <!-- 生成方針の詳細オプション -->
             <div class="checkbox-group">
               <label class="checkbox-row compact">
                 <input id="generatorUseSeasonOnlyToggle" type="checkbox" />
@@ -342,6 +375,7 @@
             </div>
           </form>
 
+          <!-- 生成結果表示 -->
           <div class="sub-panel generated-output-panel">
             <div class="section-head compact-head">
               <h3>生成結果</h3>
@@ -361,14 +395,17 @@
               </div>
             </div>
 
+            <!-- 生成時の条件などのメタ情報 -->
             <div id="generatedPoemMeta" class="active-filters generated-meta">
               <span class="filter-chip">まだ生成していません</span>
             </div>
 
+            <!-- 実際の生成和歌を表示 -->
             <div id="generatedPoemResult" class="generated-poem-display empty-state">
               ここに自動生成された一首を表示します。
             </div>
 
+            <!-- 参照した語句や条件の詳細メモ -->
             <details class="sub-panel generated-source-panel">
               <summary>参照した条件・候補語のメモ</summary>
               <div id="generatedPoemSource" class="muted">
@@ -378,6 +415,7 @@
           </div>
         </section>
 
+        <!-- ver2 の生成モード（工事中） -->
         <section id="generatorV2ModePanel" class="mode-panel" data-mode-panel="generator-v2" hidden>
           <div class="section-head compact-head">
             <div>
@@ -492,6 +530,7 @@
           </div>
         </section>
 
+        <!-- 共作モード：一部だけ人間が入力して残りを補完 -->
         <section id="assistModePanel" class="mode-panel" data-mode-panel="assist" hidden>
           <div class="section-head compact-head">
             <div>
@@ -554,6 +593,7 @@
               </label>
             </div>
 
+            <!-- 5句を手入力できるエディタ。空欄部分を後で補完する -->
             <div class="sub-panel line-editor-panel">
               <div class="section-head compact-head">
                 <h3>自分で書く箇所</h3>
@@ -583,6 +623,7 @@
                 </label>
               </div>
 
+              <!-- よくある入力パターンを一発で作る補助ボタン -->
               <div class="button-row">
                 <button id="assistPresetFirstLineButton" class="button secondary" type="button">
                   第一句だけ書く
@@ -597,6 +638,7 @@
             </div>
           </form>
 
+          <!-- 共作結果表示 -->
           <div class="sub-panel generated-output-panel">
             <div class="section-head compact-head">
               <h3>共作結果</h3>
@@ -635,6 +677,7 @@
       </div>
     </section>
 
+    <!-- 古典用語を調べる学習用エリア -->
     <section class="card controls-card full-width">
       <div class="section-head">
         <div>
@@ -643,6 +686,7 @@
         </div>
       </div>
 
+      <!-- 古典語の意味や関連語を調べるフォーム -->
       <form id="studySearchForm" class="control-stack">
         <label>
           <span>古典語</span>
@@ -656,16 +700,19 @@
         </div>
       </form>
 
+      <!-- 意味表示 -->
       <div class="sub-panel">
         <h3>意味</h3>
         <div id="studyResult"></div>
       </div>
 
+      <!-- 関連語表示 -->
       <div class="sub-panel">
         <h3>関連語</h3>
         <div id="studyRelated"></div>
       </div>
 
+      <!-- 用例表示。ボタンで別例に切り替えられる想定 -->
       <div class="sub-panel">
         <h3>和歌での使用例
           <button id="studyMoreExamples" class="button">
@@ -676,13 +723,16 @@
         <div id="studyExamples"></div>
       </div>
 
+      <!-- 単語一覧ページへのリンク -->
       <div class="button-row">
         <a href="terms.html" class="button secondary">登録単語一覧</a>
       </div>
     </section>
 
+    <!-- 和歌の詳細表示モーダル -->
     <div id="poemDetailModal" class="modal hidden">
       <div class="modal-content poem-detail-modal-content">
+        <!-- モーダルを閉じるボタン -->
         <button id="closeDetail" type="button" class="detail-close">×</button>
 
         <div class="detail-header">
@@ -691,20 +741,26 @@
         </div>
 
         <div id="detailBody" class="detail-body">
+          <!-- 和歌本文 -->
           <div id="detailPoemText" class="detail-poem-text"></div>
+
+          <!-- かな表記 -->
           <div id="detailKana" class="detail-kana"></div>
 
+          <!-- タグ表示。必要な時だけ hidden を外す想定 -->
           <section id="detailTagSection" class="detail-section hidden">
             <h3>タグ</h3>
             <div id="detailTags" class="detail-tags"></div>
           </section>
 
+          <!-- 語句と意味表示 -->
           <section id="detailWordsSection" class="detail-section hidden">
             <h3>語句と意味</h3>
             *結果は必ずしも正確ではなく、一致したものを表示しています。
             <div id="detailWords" class="detail-words"></div>
           </section>
 
+          <!-- 補足情報表示 -->
           <section id="detailMetaInfoSection" class="detail-section hidden">
             <h3>補足情報</h3>
             <div id="detailMetaInfo" class="detail-meta-info"></div>
@@ -714,6 +770,7 @@
     </div>
   </main>
 
+  <!-- 検索結果カードのテンプレート。JavaScript から複製して使う -->
   <template id="poemCardTemplate">
     <article class="poem-card">
       <div class="poem-meta"></div>
@@ -723,12 +780,36 @@
     </article>
   </template>
 
+  <!-- 画面表示を画像として保存するためのライブラリ -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="app.js"></script>
-  <script src="utayomi.js"></script>
-  <script src="utayomi_v2.js"></script>
-  <script src="favorite.js"></script>
-  <script src="study.js"></script>
+
+  <!-- メイン機能の JavaScript 群 -->
+  <script src="js/waka-api.js"></script>
+  <script src="js/app-core.js"></script>
+  <script src="js/app-utils.js"></script>
+  <script src="js/app-cache.js"></script>
+  <script src="js/app-filters.js"></script>
+  <script src="js/app-render.js"></script>
+  <script src="js/app-search.js"></script>
+  <script src="js/app-detail-ui.js"></script>
+  <script src="js/app-main.js"></script>
+  <script src="js/utayomi-core.js"></script>
+  <script src="js/utayomi-utils.js"></script>
+  <script src="js/utayomi-filters.js"></script>
+  <script src="js/utayomi-scoring.js"></script>
+  <script src="js/utayomi-generator.js"></script>
+  <script src="js/utayomi-assist.js"></script>
+  <script src="js/utayomi-render.js"></script>
+  <script src="js/utayomi-ui.js"></script>
+  <script src="js/utayomi-main.js"></script>
+  <script src="js/utayomi_v2.js"></script>
+  <script src="js/study-core.js"></script>
+  <script src="js/study-utils.js"></script>
+  <script src="js/study-dictionary.js"></script>
+  <script src="js/study-search.js"></script>
+  <script src="js/study-render.js"></script>
+  <script src="js/study-ui.js"></script>
+  <script src="js/study-main.js"></script>
 </body>
 
 </html>

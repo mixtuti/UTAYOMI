@@ -1,0 +1,13 @@
+/* ========================================
+   main.css
+   分割したCSSを順番に読み込むための入口ファイル
+======================================== */
+
+@import url('./00-tokens.css');
+@import url('./01-base.css');
+@import url('./02-layout.css');
+@import url('./03-components.css');
+@import url('./04-features.css');
+@import url('./05-stats.css');
+@import url('./06-modal.css');
+@import url('./07-responsive.css');

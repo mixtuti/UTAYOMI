@@ -2,30 +2,30 @@
 <html lang="ja">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>古典用語一覧 | 和歌コーパス検索</title>
-  <meta name="description" content="和歌に登場する古典用語・助動詞・歌枕・地名・植物などを一覧表示。検索・並び替え・タグ絞り込みができる古典用語辞典。" />
+    <title>古典用語一覧 | 和歌コーパス検索</title>
+    <meta name="description" content="和歌に登場する古典用語・助動詞・歌枕・地名・植物などを一覧表示。検索・並び替え・タグ絞り込みができる古典用語辞典。" />
 
-  <link rel="icon" href="./image/icon.png" type="image/png" />
-  <link rel="apple-touch-icon" href="./image/icon.png" />
+    <link rel="icon" href="./image/icon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="./image/icon.png" />
 
-  <!-- OGP -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="古典用語一覧 | 和歌コーパス検索" />
-  <meta property="og:description" content="和歌に登場する古典用語・助動詞・歌枕・地名・植物などを検索できる古典辞書。" />
-  <meta property="og:image" content="https://mixtuti.github.io/UTAYOMI/Image/icon.png" />
-  <meta property="og:url" content="https://mixtuti.github.io/UTAYOMI/terms.html" />
-  <meta property="og:site_name" content="和歌コーパス検索" />
+    <!-- OGP -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="古典用語一覧 | 和歌コーパス検索" />
+    <meta property="og:description" content="和歌に登場する古典用語・助動詞・歌枕・地名・植物などを検索できる古典辞書。" />
+    <meta property="og:image" content="https://mixtuti.github.io/UTAYOMI/Image/icon.png" />
+    <meta property="og:url" content="https://mixtuti.github.io/UTAYOMI/terms.html" />
+    <meta property="og:site_name" content="和歌コーパス検索" />
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="古典用語一覧 | 和歌コーパス検索" />
-  <meta name="twitter:description" content="和歌の古典用語・助動詞・歌枕などを検索できる古典辞書。" />
-  <meta name="twitter:image" content="https://mixtuti.github.io/UTAYOMI/Image/icon.png" />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="古典用語一覧 | 和歌コーパス検索" />
+    <meta name="twitter:description" content="和歌の古典用語・助動詞・歌枕などを検索できる古典辞書。" />
+    <meta name="twitter:image" content="https://mixtuti.github.io/UTAYOMI/Image/icon.png" />
 
-  <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/main.css" />
 </head>
 
 <body>
@@ -175,7 +175,13 @@
         </article>
     </template>
 
-    <script src="terms.js"></script>
+    <script src="js/terms-core.js"></script>
+    <script src="js/terms-utils.js"></script>
+    <script src="js/terms-filters.js"></script>
+    <script src="js/terms-render.js"></script>
+    <script src="js/terms-dictionary.js"></script>
+    <script src="js/terms-ui.js"></script>
+    <script src="js/terms-main.js"></script>
 </body>
 
 </html>

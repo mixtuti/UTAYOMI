@@ -1,0 +1,390 @@
+/* ========================================
+   04-features.css
+   画面固有機能：生成和歌表示、古典用語一覧・活用表など
+======================================== */
+
+/* 生成結果の和歌表示領域 */
+.generated-poem-display {
+  height: 800px;
+  width: 320px;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #fcfaf2;
+  background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  padding: 40px 20px;
+  margin: 20px 0;
+  position: relative;
+  box-shadow: inset 0 0 50px rgba(184, 154, 92, 0.1);
+}
+
+.waka-v-container {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-family: 'Yuji Syuku', serif;
+  font-size: 1.8rem;
+  line-height: 2.5;
+  letter-spacing: 0.15em;
+  color: #1a1a1a;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.waka-kami {
+  margin-left: 1.5em;
+}
+
+.waka-shimo {
+  margin-top: 5em;
+}
+
+.waka-v-container span {
+  display: inline-block;
+  filter: blur(0.2px);
+  opacity: 0;
+  animation: inkAppear 2s ease-out forwards;
+}
+
+.waka-shimo span {
+  animation-delay: 1.5s;
+}
+
+@keyframes inkAppear {
+  0% {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0.2px);
+    transform: translateY(0);
+  }
+}
+
+.generated-poem-display.capture-mode .waka-v-container span {
+  animation: none !important;
+  opacity: 1 !important;
+  filter: blur(0.2px) !important;
+  transform: none !important;
+}
+
+.generated-poem-display.capture-mode {
+  box-shadow: inset 0 0 50px rgba(184, 154, 92, 0.1);
+}
+
+/* 古典用語・学習系 */
+.study-entry-card {
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.study-entry-card:last-child {
+  border-bottom: none;
+}
+
+.three-col {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.term-card-list {
+  display: grid;
+  gap: 18px;
+}
+
+.term-card {
+  position: relative;
+  background: #fffdf9;
+  border: 1px solid #e7d9ca;
+  border-radius: 20px;
+  padding: 18px 20px;
+  box-shadow: 0 6px 18px rgba(120, 90, 60, 0.06);
+  overflow: hidden;
+}
+
+.term-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, #d9b8a6 0%, #ead8c7 100%);
+}
+
+.term-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #efe3d7;
+}
+
+.term-word {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.3;
+  color: #5f4a3d;
+  letter-spacing: 0.03em;
+}
+
+.term-reading {
+  margin: 6px 0 0;
+  font-size: 0.95rem;
+  color: #9a8576;
+}
+
+.term-part,
+.term-tags,
+.term-related,
+#termsTagQuickLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.term-part {
+  justify-content: flex-end;
+}
+
+.term-tags,
+.term-related {
+  margin-top: 10px;
+}
+
+.term-section {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed #efe3d7;
+}
+
+.term-section:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.term-section strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  color: #7e6658;
+  letter-spacing: 0.03em;
+}
+
+.term-meaning {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.term-meaning li,
+.term-aliases,
+.term-note,
+.term-meaning li,
+.term-note,
+.term-aliases {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.term-meaning li {
+  line-height: 1.8;
+  color: #5f4a3d;
+}
+
+.term-aliases,
+.term-note {
+  margin: 0;
+  line-height: 1.8;
+  color: #6f5b4f;
+}
+
+.term-note {
+  background: #faf3ec;
+  border: 1px solid #efe2d6;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.term-card .badge,
+.term-card .tag-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: #f6ece7;
+  color: #b07a64;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border: 1px solid #eddccf;
+}
+
+.term-card .tag-button,
+.term-related .tag-button,
+#termsTagQuickLinks .tag-button,
+.term-card .tag-button {
+  width: auto;
+  min-height: 34px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #e4d1c3;
+  background: #fff9f4;
+  color: #a26f5c;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.term-card .tag-button:hover {
+  background: #f9efe8;
+  transform: translateY(-1px);
+}
+
+.conjugation-block {
+  display: inline-block;
+  min-width: max-content;
+  margin-top: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.term-conjugation-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 6px;
+}
+
+.term-conjugation-wrap::-webkit-scrollbar {
+  height: 6px;
+}
+
+.term-conjugation-wrap::-webkit-scrollbar-thumb {
+  background: #e1d3c6;
+  border-radius: 4px;
+}
+
+.conj-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 0.95rem;
+  min-width: 680px;
+}
+
+.conj-table th,
+.conj-table td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.conj-table th {
+  background: #f7f7f7;
+  font-weight: 600;
+}
+
+.conjugation-wide-table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.terms-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  background: var(--paper-strong);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  display: table;
+  white-space: normal;
+}
+
+.terms-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, #f8efe4 0%, #f1e3d4 100%);
+  color: var(--accent-dark);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid var(--border-strong);
+}
+
+.terms-table th,
+.terms-table td {
+  border-bottom: 1px solid var(--border);
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.75;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.terms-table tbody tr:nth-child(even) {
+  background: rgba(255, 250, 242, 0.7);
+}
+
+.terms-table tbody tr:hover {
+  background: rgba(243, 228, 220, 0.55);
+}
+
+.terms-table th:nth-child(1),
+.terms-table td:nth-child(1) {
+  width: 120px;
+}
+
+.terms-table th:nth-child(2),
+.terms-table td:nth-child(2) {
+  width: 110px;
+}
+
+.terms-table th:nth-child(3),
+.terms-table td:nth-child(3) {
+  width: 140px;
+}
+
+.terms-table th:nth-child(4),
+.terms-table td:nth-child(4) {
+  width: 240px;
+}
+
+.terms-table th:nth-child(5),
+.terms-table td:nth-child(5) {
+  width: auto;
+  min-width: 280px;
+}
+
+.terms-table th:nth-child(6),
+.terms-table td:nth-child(6) {
+  width: 90px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.terms-table td:nth-child(1) {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.terms-table td:nth-child(2) {
+  color: var(--muted);
+}
+
+.results-list:has(.terms-table) {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

@@ -1,0 +1,125 @@
+/* ========================================
+   02-layout.css
+   ページ全体レイアウト・ヘッダー・カード・グリッド
+======================================== */
+
+.container {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.site-header {
+  position: relative;
+  padding: 56px 0 28px;
+  overflow: hidden;
+}
+
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(140, 47, 28, 0.9), rgba(111, 36, 22, 0.92)),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.06) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.04) 50%,
+      rgba(255, 255, 255, 0.04) 75%,
+      transparent 75%,
+      transparent
+    );
+  background-size:
+    100% 100%,
+    28px 28px;
+  z-index: 0;
+}
+
+.site-header .container {
+  position: relative;
+  z-index: 1;
+}
+
+.site-header .eyebrow,
+.site-header h1,
+.site-header .lead {
+  color: #fffaf2;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  opacity: 0.94;
+}
+
+.lead {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.9;
+  opacity: 0.95;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+  padding: 18px 0 52px;
+}
+
+.card {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 22px;
+  backdrop-filter: blur(1px);
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.42),
+      rgba(255, 255, 255, 0)
+    ),
+    radial-gradient(rgba(120, 90, 50, 0.03) 0.8px, transparent 0.8px);
+  background-size:
+    100% 100%,
+    16px 16px;
+  pointer-events: none;
+}
+
+.hero-card {
+  grid-column: span 7;
+}
+
+.controls-card {
+  grid-column: span 6;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.empty-state {
+  border: 1px dashed var(--border-strong);
+  border-radius: 16px;
+  padding: 18px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.72);
+}

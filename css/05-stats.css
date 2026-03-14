@@ -1,0 +1,179 @@
+/* ========================================
+   05-stats.css
+   統計・ランキング・進捗表示用UI
+======================================== */
+
+.stats-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.stats-mini-card,
+.stats-progress-wrap,
+.stats-current-poem-wrap {
+  border: 1px solid var(--border);
+  background: var(--paper-strong);
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow-soft);
+}
+
+.stats-mini-label {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.stats-mini-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+  line-height: 1.2;
+}
+
+.stats-mini-note {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.stats-bar-list,
+.stats-live-panel,
+.detail-body,
+.detail-words,
+.detail-meta-info {
+  display: grid;
+  gap: 12px;
+}
+
+.stats-live-panel {
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.stats-bar-row {
+  display: grid;
+  gap: 6px;
+}
+
+.stats-bar-meta,
+.stats-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.stats-bar-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.stats-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.stats-bar-count {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.stats-bar-track,
+.stats-progress-bar {
+  width: 100%;
+  background: #f1e5da;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.stats-bar-track {
+  height: 10px;
+}
+
+.stats-progress-bar {
+  height: 12px;
+}
+
+.stats-bar-fill,
+.stats-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #d0a58f 0%, #e7c8b7 100%);
+}
+
+.stats-progress-fill {
+  width: 0%;
+  transition: width 0.25s ease;
+}
+
+.stats-current-poem {
+  line-height: 1.9;
+  max-height: 8em;
+  overflow: hidden;
+}
+
+.stats-current-poem-text,
+.stats-current-poem-kana {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stats-current-poem-text {
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.stats-current-poem-kana {
+  margin-top: 8px;
+  font-size: 0.92rem;
+}
+
+.stats-rank-diff {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.stats-rank-diff.is-up {
+  color: #2e7d32;
+  background: #e8f5e9;
+  border-color: #c8e6c9;
+}
+
+.stats-rank-diff.is-down {
+  color: #c62828;
+  background: #ffebee;
+  border-color: #ffcdd2;
+}
+
+.stats-rank-diff.is-new {
+  color: #8e24aa;
+  background: #f3e5f5;
+  border-color: #e1bee7;
+}
+
+.stats-rank-diff.is-stay {
+  color: #6d6d6d;
+  background: #f3f3f3;
+  border-color: #e0e0e0;
+}

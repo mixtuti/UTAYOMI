@@ -1,0 +1,25 @@
+/* ========================================
+   00-tokens.css
+   デザイン全体で共通利用する変数・色・影
+======================================== */
+
+/* 和歌表示用の筆文字フォント (Google Fonts) */
+@import url('https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap');
+
+:root {
+  --bg: #f6f1e8;
+  --bg-deep: #efe6d6;
+  --paper: rgba(255, 250, 242, 0.96);
+  --paper-strong: #fffdf8;
+  --ink: #2f2418;
+  --muted: #6e6256;
+  --accent: #8c2f1c;
+  --accent-dark: #6f2416;
+  --accent-soft: #f3e4dc;
+  --gold: #b89a5c;
+  --gold-soft: #e9ddbf;
+  --border: #d8c8b2;
+  --border-strong: #cbb79c;
+  --shadow: 0 14px 34px rgba(74, 48, 24, 0.12);
+  --shadow-soft: 0 8px 22px rgba(74, 48, 24, 0.08);
+}

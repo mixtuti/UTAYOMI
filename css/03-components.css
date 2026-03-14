@@ -1,0 +1,264 @@
+/* ========================================
+   03-components.css
+   共通UI部品：フォーム、ボタン、タグ、結果一覧、ページングなど
+======================================== */
+
+.random-poem,
+.results-list,
+.ngram-results {
+  margin-top: 12px;
+}
+
+.poem-card,
+.random-poem .poem-card {
+  background: var(--paper-strong);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-soft);
+}
+
+.poem-card + .poem-card {
+  margin-top: 14px;
+}
+
+.poem-meta {
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.poem-text {
+  margin: 0 0 8px;
+  font-size: 1.08rem;
+  line-height: 2;
+  letter-spacing: 0.03em;
+}
+
+.poem-kana {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.85;
+}
+
+.poem-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.control-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+label span {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+input[type="text"],
+select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+input[type="text"]:focus,
+select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(184, 154, 92, 0.16);
+  background: #fffefb;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-row input {
+  accent-color: var(--accent);
+}
+
+.checkbox-row span {
+  margin: 0;
+  font-weight: 400;
+}
+
+.checkbox-row.compact {
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.button {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 11px 18px;
+  background: linear-gradient(
+    180deg,
+    var(--accent) 0%,
+    var(--accent-dark) 100%
+  );
+  color: #fffdf9;
+  cursor: pointer;
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  font-family: inherit;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease,
+    box-shadow 0.15s ease;
+  box-shadow: 0 6px 14px rgba(111, 36, 22, 0.18);
+}
+
+.button:hover {
+  opacity: 0.96;
+  transform: translateY(-1px);
+}
+
+.button.secondary {
+  background: linear-gradient(180deg, #f6ede7 0%, #ecdfd5 100%);
+  color: var(--accent);
+  border-color: #e2d0c3;
+  box-shadow: 0 4px 10px rgba(111, 36, 22, 0.06);
+}
+
+.quick-links,
+.sub-panel {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gold-soft);
+}
+
+.tag-row,
+.active-filters,
+.detail-tags,
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-button,
+.filter-chip,
+.badge,
+.tag-chip,
+.detail-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-family: inherit;
+}
+
+.tag-button {
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #fffdf9 0%, #f7efe5 100%);
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tag-button:hover {
+  border-color: var(--gold);
+  background: #fff7ee;
+}
+
+.filter-chip,
+.badge {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.tag-chip,
+.detail-tag {
+  background: #f2f2f2;
+  line-height: 1.4;
+}
+
+.ngram-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.ngram-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: #fffdfa;
+}
+
+.result-options {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.results-list.vertical-mode .poem-text,
+.random-poem.vertical-mode .poem-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  max-height: 18em;
+  line-height: 2.1;
+  margin-inline: auto;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination-info,
+.pagination-ellipsis {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.pagination-info {
+  margin-left: 8px;
+}
