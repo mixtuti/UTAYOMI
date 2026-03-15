@@ -2,6 +2,22 @@
 (function (global) {
   const app = global.WakaApp;
 
+  // 誤検出しやすい短い動詞・補助的な語
+  // ここに入れた語は、通常一致では採用せず manual_terms があるときだけ出す
+  app.constants = app.constants || {};
+  app.constants.MANUAL_ONLY_SENSITIVE_TERMS = new Set([
+    "死ぬ",
+    "する",
+    "なる",
+    "いる",
+    "居る",
+    "あり",
+    "有り",
+    "行く",
+    "来",
+    "見る"
+  ].map((v) => app.normalizeText(v)));
+
   app.initializePoemCaches = function initializePoemCaches() {
     const state = app.state;
 
@@ -36,20 +52,29 @@
   };
 
   // 助詞・助動詞かどうかを判定
-  // 語釈の誤検出を防ぐため、これらは厳格運用する
   app.isFunctionWordTerm = function isFunctionWordTerm(term) {
     const pos = String(term?.partOfSpeech || "");
     return pos.includes("助詞") || pos.includes("助動詞");
+  };
+
+  // 危険語リストに入っている、manual_terms 必須の語かどうか
+  app.isSensitiveManualOnlyTerm = function isSensitiveManualOnlyTerm(term) {
+    const word = app.normalizeText(term?.word || "");
+    if (!word) return false;
+    return app.constants.MANUAL_ONLY_SENSITIVE_TERMS.has(word);
   };
 
   // manual_terms による明示許可が必要な語かどうか
   // - 1文字語
   // - 助詞
   // - 助動詞
+  // - 危険語リストに入った短い動詞など
   app.isStrictManualOnlyTerm = function isStrictManualOnlyTerm(term) {
     const word = app.normalizeText(term?.word || "");
     if (word.length <= 1) return true;
-    return app.isFunctionWordTerm(term);
+    if (app.isFunctionWordTerm(term)) return true;
+    if (app.isSensitiveManualOnlyTerm(term)) return true;
+    return false;
   };
 
   // この歌データが、その語釈を明示的に許可しているかを判定
@@ -72,33 +97,90 @@
     return forms.some((form) => allowed.has(form));
   };
 
+  // この歌データが、その語釈を明示的に除外しているかを判定
+  // poem.manual_exclude_terms に term.word またはそのフォームが入っていれば除外
+  app.isTermExcludedByPoemManualTerms = function isTermExcludedByPoemManualTerms(poem, term) {
+    const manualExcluded = Array.isArray(poem.manual_exclude_terms)
+      ? poem.manual_exclude_terms
+      : [];
+
+    if (!manualExcluded.length) return false;
+
+    const blocked = new Set(
+      manualExcluded
+        .map((item) => (typeof item === "string" ? item : item?.word))
+        .map((v) => app.normalizeText(v))
+        .filter(Boolean)
+    );
+
+    const word = app.normalizeText(term?.word || "");
+    const forms = term.__cache?.normalizedForms || [];
+
+    if (word && blocked.has(word)) return true;
+    return forms.some((form) => blocked.has(form));
+  };
+
   app.initializeTermCaches = function initializeTermCaches() {
     const state = app.state;
 
     state.termDictionary = (Array.isArray(state.termDictionary) ? state.termDictionary : []).map((term) => {
-      const forms = [
-        term.word,
-        term.reading,
-        ...(Array.isArray(term.surface_forms) ? term.surface_forms : []),
-        ...(Array.isArray(term.aliases) ? term.aliases : []),
-        ...(Array.isArray(term.variants) ? term.variants : [])
+      const rawEntries = [
+        { value: term.word, source: "word" },
+        { value: term.reading, source: "reading" },
+        ...(Array.isArray(term.surface_forms) ? term.surface_forms.map((v) => ({ value: v, source: "surface_forms" })) : []),
+        ...(Array.isArray(term.aliases) ? term.aliases.map((v) => ({ value: v, source: "aliases" })) : []),
+        ...(Array.isArray(term.variants) ? term.variants.map((v) => ({ value: v, source: "variants" })) : [])
       ]
-        .map((v) => String(v || "").trim())
-        .filter(Boolean);
+        .map((item) => ({
+          raw: String(item.value || "").trim(),
+          source: item.source
+        }))
+        .filter((item) => item.raw);
+
+      const forms = rawEntries.map((item) => item.raw);
+
+      const normalizedEntries = rawEntries
+        .map((item) => ({
+          form: app.normalizeText(item.raw),
+          source: item.source
+        }))
+        .filter((item) => item.form);
+
+      const seen = new Set();
+      const normalizedEntriesUnique = normalizedEntries.filter((item) => {
+        const key = `${item.source}:${item.form}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
 
       const normalizedForms = [...new Set(
-        forms.map((v) => app.normalizeText(v)).filter(Boolean)
+        normalizedEntriesUnique.map((item) => item.form)
       )];
 
       const isFunctionWord = app.isFunctionWordTerm(term);
+      const isSensitiveManualOnly = app.isSensitiveManualOnlyTerm(term);
 
       // 実際の一致判定に使うフォーム
-      // 内容語は 1文字一致を禁止して「ぬ→死ぬ」のような誤爆を減らす
-      const strictMatchForms = normalizedForms.filter((form) => {
-        if (!form) return false;
-        if (isFunctionWord) return true;
-        return form.length >= 2;
-      });
+      // - 助詞・助動詞はそのまま残す（ただし採用は manual_terms 必須）
+      // - 危険語リスト語は厳密一致を作らない（manual_terms でのみ通す）
+      // - 内容語は1文字一致を禁止
+      // - 動詞は reading / aliases だけの一致を避けて誤爆を減らす
+      const strictMatchForms = normalizedEntriesUnique
+        .filter((item) => {
+          if (!item.form) return false;
+          if (isSensitiveManualOnly) return false;
+          if (isFunctionWord) return true;
+
+          const pos = String(term?.partOfSpeech || "");
+          const isVerb = pos.includes("動詞");
+          if (isVerb && (item.source === "reading" || item.source === "aliases")) {
+            return false;
+          }
+
+          return item.form.length >= 2;
+        })
+        .map((item) => item.form);
 
       return {
         ...term,
@@ -214,16 +296,29 @@
 
     state.termDictionary.forEach((term) => {
       const strictForms = term.__cache?.strictMatchForms || [];
-      if (!strictForms.length) return;
 
-      const found = strictForms.some((form) => exactTokenSet.has(form));
-      if (!found) return;
+      // 明示除外は最優先
+      if (app.isTermExcludedByPoemManualTerms(poem, term)) {
+        return;
+      }
 
-      // 助詞・助動詞・短語は manual_terms による明示許可があるときだけ採用
+      const foundByStrict = strictForms.some((form) => exactTokenSet.has(form));
+      const allowedByManual = app.isTermAllowedByPoemManualTerms(poem, term);
+
+      // 明示許可があるものはそのまま通す
+      if (allowedByManual) {
+        matched.push(term);
+        return;
+      }
+
+      // 通常一致しないものは不採用
+      if (!foundByStrict) {
+        return;
+      }
+
+      // 助詞・助動詞・短語・危険語リスト語は manual_terms がない限り不採用
       if (app.isStrictManualOnlyTerm(term)) {
-        if (!app.isTermAllowedByPoemManualTerms(poem, term)) {
-          return;
-        }
+        return;
       }
 
       matched.push(term);
@@ -232,8 +327,13 @@
     const tokens = cache.normalizedSearchTokens;
 
     matched.sort((a, b) => {
-      const aForms = a.__cache?.strictMatchForms || [];
-      const bForms = b.__cache?.strictMatchForms || [];
+      const aForms = (a.__cache?.strictMatchForms && a.__cache.strictMatchForms.length)
+        ? a.__cache.strictMatchForms
+        : (a.__cache?.normalizedForms || []);
+
+      const bForms = (b.__cache?.strictMatchForms && b.__cache.strictMatchForms.length)
+        ? b.__cache.strictMatchForms
+        : (b.__cache?.normalizedForms || []);
 
       const aIndex = tokens.findIndex((t) => aForms.includes(t));
       const bIndex = tokens.findIndex((t) => bForms.includes(t));
