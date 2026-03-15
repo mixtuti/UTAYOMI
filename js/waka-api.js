@@ -29,7 +29,8 @@
     // 追加表示ONのときだけ読み込む拡張和歌データ
     extraPoemFiles: [
       "./data/poemsex.json",
-      "./data/poemsex1.json"
+      "./data/poemsex1.json",
+      "./data/poemsex2.json"
     ],
 
     // 季語辞書
