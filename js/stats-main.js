@@ -1,0 +1,2 @@
+// エントリーポイント
+window.WakaStats.init();

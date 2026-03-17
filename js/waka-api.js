@@ -8,10 +8,6 @@
 (function (global) {
   // ==================================================
   // 1. 初期設定
-  // --------------------------------------------------
-  // 読み込むJSONファイルの場所をまとめて管理する設定オブジェクトです。
-  // 後から setConfig() を使って差し替えられるように、
-  // ここで「標準値」を定義しています。
   // ==================================================
   const DEFAULT_CONFIG = {
     // 通常表示で使う和歌データ本体
@@ -42,14 +38,6 @@
 
   // ==================================================
   // 2. 汎用JSON読み込み関数
-  // --------------------------------------------------
-  // 指定URLからJSONを1つ読み込みます。
-  // すべてのロード処理の土台になる基本関数です。
-  //
-  // 処理内容:
-  // 1) fetchでURLへアクセス
-  // 2) HTTPエラーなら例外を投げる
-  // 3) JSONとして返す
   // ==================================================
   async function fetchJson(url) {
     const response = await fetch(url);
@@ -63,16 +51,6 @@
 
   // ==================================================
   // 3. 「配列形式のJSON」専用読み込み関数
-  // --------------------------------------------------
-  // 和歌データのように、JSONの中身が配列であることを前提に読む関数です。
-  //
-  // 例:
-  // [
-  //   { ...和歌1件分... },
-  //   { ...和歌1件分... }
-  // ]
-  //
-  // 配列でなかった場合は、データ形式が想定と違うのでエラーにします。
   // ==================================================
   async function fetchJsonArrayFile(url) {
     const data = await fetchJson(url);
@@ -86,17 +64,6 @@
 
   // ==================================================
   // 4. 複数の配列JSONをまとめて読み込む関数
-  // --------------------------------------------------
-  // poems.json / poems1.json / poems2.json ... のように、
-  // 複数ファイルに分割された和歌データを一括で読み込みます。
-  //
-  // options.ignoreErrors が true の場合:
-  // - ある1ファイルが壊れていても全体停止しない
-  // - 読めなかったファイルだけスキップする
-  //
-  // 最後に chunks.flat() で
-  // [[...], [...], [...]] → [...]
-  // にまとめて、1本の配列として返します。
   // ==================================================
   async function fetchJsonArrayFiles(urls, options = {}) {
     const { ignoreErrors = true } = options;
@@ -120,50 +87,87 @@
   }
 
   // ==================================================
-  // 5. 読み込む和歌ファイル一覧を組み立てる関数
-  // --------------------------------------------------
-  // includeExtra が true のときだけ poemsex.json を追加します。
-  //
-  // 役割:
-  // - 「どの和歌ファイルを読むか」を決める
-  // - loadPoems() 本体をシンプルにする
+  // 5. URLパラメータ・モード解決
   // ==================================================
-  function buildPoemFileList(options = {}, config = DEFAULT_CONFIG) {
-    const includeExtra = !!options.includeExtra;
+  // stats.html?ura
+  //   -> 通常 + extra
+  //
+  // stats.html?ura_only
+  //   -> extra のみ
+  //
+  // 通常画面は従来どおり includeExtra だけでも使えるようにしつつ、
+  // mode でも制御できるようにしている。
+  function getUrlFlags() {
+    const params = new URLSearchParams(global.location.search);
 
-    return [
-      ...config.poemFiles,
-      ...(includeExtra ? config.extraPoemFiles : []),
-    ];
+    return {
+      includeExtraFromUrl: params.has("ura"),
+      extraOnlyFromUrl: params.has("ura_only"),
+    };
+  }
+
+  // options から最終的な読込モードを決める
+  //
+  // 優先順位:
+  // 1. options.mode
+  // 2. options.extraOnly
+  // 3. options.includeExtra
+  // 4. URL ?ura_only / ?ura
+  // 5. 通常
+  //
+  // mode:
+  // - "normal" : 通常のみ
+  // - "all"    : 通常 + extra
+  // - "extra"  : extraのみ
+  function resolvePoemLoadMode(options = {}) {
+    const flags = getUrlFlags();
+
+    if (options.mode === "normal" || options.mode === "all" || options.mode === "extra") {
+      return options.mode;
+    }
+
+    if (options.extraOnly) {
+      return "extra";
+    }
+
+    if (options.includeExtra) {
+      return "all";
+    }
+
+    if (flags.extraOnlyFromUrl) {
+      return "extra";
+    }
+
+    if (flags.includeExtraFromUrl) {
+      return "all";
+    }
+
+    return "normal";
   }
 
   // ==================================================
-  // 6. 外部公開するAPI本体
-  // --------------------------------------------------
-  // このオブジェクトが「和歌データ取得の窓口」です。
-  // app.js や他のスクリプトは、基本的にこの WakaAPI を通して
-  // データを読み込むことになります。
+  // 6. 読み込む和歌ファイル一覧を組み立てる関数
+  // ==================================================
+  function buildPoemFileList(options = {}, config = DEFAULT_CONFIG) {
+    const mode = resolvePoemLoadMode(options);
+
+    switch (mode) {
+      case "extra":
+        return [...config.extraPoemFiles];
+      case "all":
+        return [...config.poemFiles, ...config.extraPoemFiles];
+      case "normal":
+      default:
+        return [...config.poemFiles];
+    }
+  }
+
+  // ==================================================
+  // 7. 外部公開するAPI本体
   // ==================================================
   const WakaAPI = {
-    // 現在使っている設定を保持
-    // 初期値として DEFAULT_CONFIG をコピーして持っておく
     config: { ...DEFAULT_CONFIG },
 
-    // --------------------------------------------------
-    // 設定差し替え用
-    // --------------------------------------------------
-    // 外部からファイルパスを上書きしたいときに使います。
-    //
-    // 例:
-    // WakaAPI.setConfig({
-    //   kigoFile: "./mock/kigo-test.json"
-    // });
-    //
-    // 主な用途:
-    // - テスト用データへの差し替え
-    // - 開発環境 / 本番環境でパスを変える
-    // - 将来APIのURLに切り替える準備
-    // --------------------------------------------------
     setConfig(nextConfig = {}) {
       this.config = {
         ...this.config,
@@ -171,56 +175,43 @@
       };
     },
 
+    // 現在のURLから見たフラグを返す
+    getUrlFlags() {
+      return getUrlFlags();
+    },
+
+    // 現在の options / URL から見た最終モードを返す
+    resolvePoemLoadMode(options = {}) {
+      return resolvePoemLoadMode(options);
+    },
+
     // --------------------------------------------------
     // 和歌データ本体だけを取得する
     // --------------------------------------------------
-    // includeExtra が true なら poemsex.json も含めて読み込みます。
+    // mode:
+    // - "normal" : 通常のみ
+    // - "all"    : 通常 + extra
+    // - "extra"  : extraのみ
+    //
+    // 後方互換:
+    // - includeExtra: true -> "all"
+    // - extraOnly: true    -> "extra"
     //
     // 戻り値:
     // - 和歌オブジェクトの配列
-    // --------------------------------------------------
     async loadPoems(options = {}) {
       const poemFiles = buildPoemFileList(options, this.config);
       return fetchJsonArrayFiles(poemFiles, { ignoreErrors: true });
     },
 
-    // --------------------------------------------------
-    // 季語辞書だけを取得する
-    // --------------------------------------------------
-    // 戻り値:
-    // - kigo.json の中身
-    // --------------------------------------------------
     async loadKigoDictionary() {
       return fetchJson(this.config.kigoFile);
     },
 
-    // --------------------------------------------------
-    // 古典用語辞書だけを取得する
-    // --------------------------------------------------
-    // 戻り値:
-    // - classical_terms.json の中身
-    // --------------------------------------------------
     async loadTermDictionary() {
       return fetchJson(this.config.termFile);
     },
 
-    // --------------------------------------------------
-    // 画面初期化に必要なデータをまとめて取得する
-    // --------------------------------------------------
-    // app.js 側で最もよく使う想定の関数です。
-    //
-    // 並列で以下をまとめて読み込みます:
-    // - 和歌データ
-    // - 季語辞書
-    // - 古典用語辞書
-    //
-    // 戻り値:
-    // {
-    //   poems,
-    //   kigoDictionary,
-    //   termDictionary
-    // }
-    // --------------------------------------------------
     async loadAll(options = {}) {
       const [poems, kigoDictionary, termDictionary] = await Promise.all([
         this.loadPoems(options),
@@ -235,20 +226,6 @@
       };
     },
 
-    // --------------------------------------------------
-    // 簡易API風の共通取得窓口
-    // --------------------------------------------------
-    // "poems" / "kigo" / "terms" / "all" のように
-    // 名前で欲しいデータを指定して取得できます。
-    //
-    // 例:
-    // await WakaAPI.get("poems")
-    // await WakaAPI.get("all", { includeExtra: true })
-    //
-    // メリット:
-    // - 外部から使うときに統一感がある
-    // - 将来APIエンドポイントっぽい形に寄せやすい
-    // --------------------------------------------------
     async get(resourceName, options = {}) {
       switch (resourceName) {
         case "poems":
@@ -265,16 +242,5 @@
     },
   };
 
-  // ==================================================
-  // 7. グローバル公開
-  // --------------------------------------------------
-  // window.WakaAPI として外部から使えるようにします。
-  //
-  // これで他のJSから:
-  //   window.WakaAPI.loadAll()
-  //   window.WakaAPI.get("poems")
-  // のように呼び出せます。
-  // ==================================================
   global.WakaAPI = WakaAPI;
 })(window);
-
